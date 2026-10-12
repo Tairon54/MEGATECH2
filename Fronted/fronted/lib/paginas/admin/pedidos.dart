@@ -10,7 +10,11 @@ import 'package:fronted/paginas/admin/widets.dart/pedido/targetapedido.dart';
 import 'package:fronted/service/pedidos.dart';
 
 class Pedidos extends StatefulWidget {
-  const Pedidos({super.key});
+  /// Solo el admin puede cambiar el estado de un pedido.
+  /// El empleado ve lo mismo, pero en modo solo lectura.
+  final bool puedeCambiarEstado;
+
+  const Pedidos({super.key, this.puedeCambiarEstado = true});
 
   @override
   State<Pedidos> createState() => _PedidosState();
@@ -69,7 +73,12 @@ class _PedidosState extends State<Pedidos> {
   Future<void> _abrirDetalle(Pedido pedido) async {
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => DetallePedido(pedido: pedido)),
+      MaterialPageRoute(
+        builder: (_) => DetallePedido(
+          pedido: pedido,
+          puedeCambiarEstado: widget.puedeCambiarEstado,
+        ),
+      ),
     );
     if (mounted) _recargar();
   }

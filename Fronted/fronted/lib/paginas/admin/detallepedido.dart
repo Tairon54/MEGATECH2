@@ -14,7 +14,14 @@ import 'package:google_fonts/google_fonts.dart';
 class DetallePedido extends StatefulWidget {
   final Pedido pedido;
 
-  const DetallePedido({super.key, required this.pedido});
+  /// false para el empleado: ve el estado pero no puede cambiarlo.
+  final bool puedeCambiarEstado;
+
+  const DetallePedido({
+    super.key,
+    required this.pedido,
+    this.puedeCambiarEstado = true,
+  });
 
   @override
   State<DetallePedido> createState() => _DetallePedidoState();
@@ -32,6 +39,7 @@ class _DetallePedidoState extends State<DetallePedido> {
   }
 
   Future<void> _cambiarEstado() async {
+    if (!widget.puedeCambiarEstado) return; // seguridad extra
     final elegido = await elegirNuevoEstado(context, _pedido);
     if (elegido == null || !mounted) return;
 
@@ -124,6 +132,7 @@ class _DetallePedidoState extends State<DetallePedido> {
           PanelEstadoPedido(
             pedido: _pedido,
             cambiando: _cambiando,
+            soloLectura: !widget.puedeCambiarEstado,
             onCambiar: _cambiarEstado,
           ),
         ],

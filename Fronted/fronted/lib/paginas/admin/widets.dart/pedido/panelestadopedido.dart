@@ -13,11 +13,15 @@ class PanelEstadoPedido extends StatelessWidget {
   final bool cambiando;
   final VoidCallback onCambiar;
 
+  /// true = solo muestra el estado (sin botón). Se usa con el empleado.
+  final bool soloLectura;
+
   const PanelEstadoPedido({
     super.key,
     required this.pedido,
     required this.cambiando,
     required this.onCambiar,
+    this.soloLectura = false,
   });
 
   @override
@@ -52,6 +56,9 @@ class PanelEstadoPedido extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
+          if (soloLectura)
+            _EstadoSoloLectura(estado: pedido.estado)
+          else
           SizedBox(
             width: double.infinity,
             height: 52,
@@ -96,6 +103,43 @@ class PanelEstadoPedido extends StatelessWidget {
                         ),
                       ],
                     ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Muestra el estado del pedido como etiqueta (sin ser un botón).
+class _EstadoSoloLectura extends StatelessWidget {
+  final String estado;
+
+  const _EstadoSoloLectura({required this.estado});
+
+  @override
+  Widget build(BuildContext context) {
+    final color = EstadoPedido.color(estado);
+
+    return Container(
+      width: double.infinity,
+      height: 52,
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.15),
+        border: Border.all(color: color, width: 1.5),
+        borderRadius: BorderRadius.circular(26),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(EstadoPedido.icono(estado), color: color, size: 22),
+          const SizedBox(width: 8),
+          Text(
+            'Estado: $estado',
+            style: GoogleFonts.poppins(
+              color: color,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ],
