@@ -136,6 +136,7 @@ class _RecuperapassState extends State<Recuperapass> {
                         borderRadius: 24,
                         colores: const [Color(0xFF00C6FF), Color(0xFF0072FF)],
                         colorTexto: Colors.black,
+                        icono: Icons.send,
                       ),
                     ],
                   ),
