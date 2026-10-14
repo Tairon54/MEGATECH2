@@ -45,6 +45,7 @@ class Register extends StatelessWidget {
                 BotonDegradado(
                   texto: 'Siguiente',
                   height: 56,
+                  icono: Icons.arrow_forward,
                   onTap: () => Navigator.of(context).pushReplacement(
                     MaterialPageRoute(builder: (_) => const Login()),
                   ),

@@ -26,6 +26,11 @@ class AppColors {
   static const Color textoPrincipal = Colors.white;
   static const Color textoBoton = Colors.black;
 
+  // Estados
+  static const Color rojo = Color(0xFFFF5252);
+  static const Color rojoOscuro = Color(0xFFB71C1C);
+  static const Color cian = Color(0xFF1BC2F0);
+
   // Gradientes reutilizables
   static const LinearGradient gradienteFondo = LinearGradient(
     begin: Alignment.topCenter,

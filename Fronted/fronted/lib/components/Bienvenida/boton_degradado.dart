@@ -8,8 +8,8 @@ class BotonDegradado extends StatefulWidget {
   final double borderRadius;
   final List<Color> colores;
   final Color colorTexto;
-  // Si es true: deshabilita el botón y muestra un spinner en vez del texto.
   final bool cargando;
+  final IconData? icono;
 
   const BotonDegradado({
     super.key,
@@ -20,6 +20,7 @@ class BotonDegradado extends StatefulWidget {
     this.colores = const [Color(0xFF29B6F6), Color(0xFF0288D1)],
     this.colorTexto = Colors.white,
     this.cargando = false,
+    this.icono,
   });
 
   @override
@@ -30,8 +31,8 @@ class _BotonDegradadoState extends State<BotonDegradado> {
   bool _presionado = false;
 
   void _cambiarPresionado(bool valor) {
-    // Si está cargando, no reaccionamos a los toques.
     if (widget.cargando) return;
+
     setState(() {
       _presionado = valor;
     });
@@ -64,13 +65,23 @@ class _BotonDegradadoState extends State<BotonDegradado> {
                       strokeWidth: 2,
                     ),
                   )
-                : Text(
-                    widget.texto,
-                    style: GoogleFonts.acme(
-                      color: widget.colorTexto,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                : Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (widget.icono != null) ...[
+                        Icon(widget.icono, color: widget.colorTexto, size: 20),
+                        const SizedBox(width: 8),
+                      ],
+                      Text(
+                        widget.texto,
+                        style: GoogleFonts.acme(
+                          color: widget.colorTexto,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
           ),
         ),
