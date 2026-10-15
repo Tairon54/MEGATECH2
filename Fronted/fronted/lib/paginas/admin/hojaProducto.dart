@@ -4,7 +4,6 @@ import 'package:fronted/components/Bienvenida/boton_degradado.dart';
 import 'package:fronted/components/comunes/aviso.dart' show textoError;
 import 'package:fronted/components/comunes/campoFormulario.dart';
 import 'package:fronted/components/comunes/selectorFoto.dart';
-import 'package:fronted/components/comunes/selectorFoto.dart';
 import 'package:fronted/components/comunes/selectorStock.dart';
 import 'package:fronted/model/productos.dart';
 import 'package:fronted/model/subcategoria.dart';

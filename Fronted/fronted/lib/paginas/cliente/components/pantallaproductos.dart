@@ -4,7 +4,7 @@ import 'package:fronted/components/login/fondo.dart';
 import 'package:fronted/model/productos.dart';
 import 'package:fronted/paginas/admin/widets.dart/targetaproducto.dart';
 import 'package:fronted/paginas/cliente/components/menu.dart';
-import 'package:fronted/paginas/cliente/components/targetaproductocliente.dart';
+import 'package:fronted/paginas/cliente/components/targetasproductos.dart';
 import 'package:fronted/service/productoservice.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -44,18 +44,20 @@ class _PantallaProductosState extends State<PantallaProductos> {
   Future<_Resultado> _cargar() async {
     final rol = await _service.rolActual();
     final esPersonal = rol == 'Admin' || rol == 'Empleado';
+    // Sin token válido (invitado) rol es null: no puede usar el carrito.
+    final sesionIniciada = rol != null;
     final productos = await _service.obtenerPorSubcategoria(
       widget.subcategoria,
       soloDisponibles: !esPersonal,
     );
-    return _Resultado(productos, esPersonal);
+    return _Resultado(productos, esPersonal, sesionIniciada);
   }
 
   Future<void> _recargar() async {
     setState(() {
       _futuro = _cargar();
     });
-    await _futuro.catchError((_) => const _Resultado([], false));
+    await _futuro.catchError((_) => const _Resultado([], false, false));
   }
 
   @override
@@ -131,7 +133,10 @@ class _PantallaProductosState extends State<PantallaProductos> {
                         separatorBuilder: (_, __) => const SizedBox(height: 14),
                         itemBuilder: (context, i) => resultado.esPersonal
                             ? TarjetaProductoAdmin(producto: productos[i])
-                            : TarjetaProductoCliente(producto: productos[i]),
+                            : TarjetaProductoCliente(
+                                producto: productos[i],
+                                mostrarCarrito: resultado.sesionIniciada,
+                              ),
                       ),
                     );
                   },
@@ -186,10 +191,12 @@ class _PantallaProductosState extends State<PantallaProductos> {
   }
 }
 
-/// Productos ya filtrados + si quien mira es personal (admin/empleado).
+/// Productos ya filtrados + si quien mira es personal (admin/empleado)
+/// + si hay una sesión iniciada.
 class _Resultado {
   final List<Producto> productos;
   final bool esPersonal;
+  final bool sesionIniciada;
 
-  const _Resultado(this.productos, this.esPersonal);
+  const _Resultado(this.productos, this.esPersonal, this.sesionIniciada);
 }

@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:fronted/colores/stilocolores.dart';
 import 'package:fronted/components/comunes/botonCircular.dart';
-import 'package:fronted/paginas/admin/widets.dart/targetapedido.dart'
+import 'package:fronted/paginas/admin/widets.dart/pedido/targetapedido.dart'
     show FotoCuadrada;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';

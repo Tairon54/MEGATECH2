@@ -1,5 +1,5 @@
 import express from "express";
-import {listarProductos,obtenerProducto,crear,actualizar,eliminar,bajoStock,listarBajoStock} from "../controller/productos.js";
+import {listarProductos,obtenerProducto,crear,actualizar,eliminar,bajoStock,listarBajoStock,masVendidos} from "../controller/productos.js";
 import { verificarToken, verificarRol } from "../middleware/auth.js";
 import { cloudinary, upload } from "../config/claudinary.js";
 
@@ -37,5 +37,7 @@ router.delete(
     verificarRol("Admin"),
     eliminar
 );
+
+router.get("/mas-vendidos", masVendidos);
 
 export default router;

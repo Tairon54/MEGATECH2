@@ -282,4 +282,23 @@ class ProductosService {
         .where((p) => !soloDisponibles || p.stock > 0)
         .toList();
   }
+
+  /// GET /productos/mas-vendidos (ruta pública): los 3 más vendidos.
+  Future<List<Producto>> obtenerMasVendidos() async {
+    final url = Uri.parse(
+      '${ApiConfig.rootUrl}/productos/mas-vendidos?limite=3',
+    );
+    final response = await http
+        .get(url, headers: ApiConfig.headers)
+        .timeout(const Duration(seconds: 20));
+
+    if (response.statusCode != 200) {
+      throw Exception('Error al obtener los más vendidos');
+    }
+
+    final List<dynamic> data = jsonDecode(response.body);
+    return data
+        .map((e) => Producto.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
 }
