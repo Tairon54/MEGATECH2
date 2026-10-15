@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:fronted/model/pedidos.dart';
+import 'package:fronted/service/carrito.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'apiuser.dart';
@@ -22,6 +23,23 @@ class PedidosService {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
     return {...ApiConfig.headers, 'Authorization': 'Bearer $token'};
+  }
+
+  /// Id del usuario que inició sesión, leído del token JWT (campo "id").
+  /// Si no hay sesión devuelve null.
+  Future<Object?> _idUsuarioActual() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? '';
+    final partes = token.split('.');
+    if (partes.length != 3) return null;
+    try {
+      final payload = utf8.decode(
+        base64Url.decode(base64Url.normalize(partes[1])),
+      );
+      return (jsonDecode(payload) as Map<String, dynamic>)['id'];
+    } catch (_) {
+      return null;
+    }
   }
 
   String _mensajeDe(http.Response r, String porDefecto) {
@@ -89,5 +107,47 @@ class PedidosService {
     // El backend responde 500 con "El pedido se actualizó, pero ..." cuando el
     // estado ya quedó guardado y solo falló el correo al cliente.
     throw PedidoException(mensaje, aplicado: mensaje.contains('se actualizó'));
+  }
+
+  /// POST /pedidos/crear -> crea el pedido (estado "Por pagar") con los
+  /// productos del carrito. El backend toma el precio real de la base de
+  /// datos, valida el stock y lo descuenta. Devuelve el id del pedido.
+  Future<int?> crearPedido(List<ItemCarrito> items) async {
+    final idCliente = await _idUsuarioActual();
+    if (idCliente == null) {
+      throw const PedidoException('Inicia sesión para hacer tu pedido');
+    }
+
+    final url = Uri.parse('${ApiConfig.rootUrl}/pedidos/crear');
+    final response = await http
+        .post(
+          url,
+          headers: await _headersConToken(),
+          body: jsonEncode({
+            'id_cliente': idCliente,
+            'productos': items
+                .map(
+                  (i) => {'id_producto': i.producto.id, 'cantidad': i.cantidad},
+                )
+                .toList(),
+          }),
+        )
+        .timeout(const Duration(seconds: 30));
+
+    if (response.statusCode == 201 || response.statusCode == 200) {
+      try {
+        final data = jsonDecode(response.body);
+        return int.tryParse(data['pedido']['id'].toString());
+      } catch (_) {
+        return null; // el pedido se creó; solo no pudimos leer su número
+      }
+    }
+
+    if (response.statusCode == 401) {
+      throw const PedidoException(
+        'Tu sesión expiró. Inicia sesión de nuevo para pagar.',
+      );
+    }
+    throw PedidoException(_mensajeDe(response, 'No se pudo crear el pedido'));
   }
 }

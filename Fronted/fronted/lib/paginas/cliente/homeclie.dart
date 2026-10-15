@@ -82,16 +82,18 @@ class _HomeclieState extends State<Homeclie> {
                 );
               },
             ),
-          BotonNav(
-            icon: Icons.shopping_cart,
-            size: 26,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Carrito()),
-              );
-            },
-          ),
+          // El carrito solo existe con sesión iniciada (no para invitados)
+          if (!widget.esInvitado)
+            BotonNav(
+              icon: Icons.shopping_cart,
+              size: 26,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Carrito()),
+                );
+              },
+            ),
         ],
       ),
       body: Fondo(

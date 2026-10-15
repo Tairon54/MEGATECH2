@@ -6,6 +6,7 @@ import 'package:fronted/components/login/encabesado.dart';
 import 'package:fronted/components/login/fondo.dart';
 import 'package:fronted/paginas/admin/widets.dart/datoperfil.dart';
 import 'package:fronted/paginas/login.dart';
+import 'package:fronted/service/carrito.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Perfil extends StatefulWidget {
@@ -86,6 +87,9 @@ class _PerfilState extends State<Perfil> {
 
                           // Eliminar el token de la sesión
                           await prefs.remove('token');
+
+                          // El carrito es de la sesión: se vacía al salir
+                          CarritoService.instance.vaciar();
 
                           if (!context.mounted) return;
 
