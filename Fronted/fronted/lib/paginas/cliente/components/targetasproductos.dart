@@ -4,13 +4,41 @@ import 'package:fronted/model/pedidos.dart' show formatearPesos;
 import 'package:fronted/model/productos.dart';
 import 'package:fronted/paginas/admin/widets.dart/pedido/targetapedido.dart'
     show FotoCuadrada;
+import 'package:fronted/service/carrito.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// Tarjeta de producto para el cliente: solo foto, nombre, descripción y precio.
+/// Tarjeta de producto para el cliente: foto, nombre, descripción, precio
+/// y, solo si hay sesión iniciada, un botón para añadir al carrito.
 class TarjetaProductoCliente extends StatelessWidget {
   final Producto producto;
 
-  const TarjetaProductoCliente({super.key, required this.producto});
+  /// true únicamente cuando el usuario inició sesión.
+  final bool mostrarCarrito;
+
+  const TarjetaProductoCliente({
+    super.key,
+    required this.producto,
+    this.mostrarCarrito = false,
+  });
+
+  void _agregar(BuildContext context) {
+    final ok = CarritoService.instance.agregar(producto);
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.hideCurrentSnackBar();
+    messenger.showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 2),
+        backgroundColor: ok ? AppColors.azulOscuro : AppColors.rojoOscuro,
+        content: Text(
+          ok
+              ? '${producto.nombre} añadido al carrito'
+              : 'Ya tienes todas las unidades disponibles en el carrito',
+          style: GoogleFonts.poppins(color: Colors.white),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,11 +88,69 @@ class TarjetaProductoCliente extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+                if (mostrarCarrito) ...[
+                  const SizedBox(height: 10),
+                  _BotonAgregarCarrito(
+                    producto: producto,
+                    onPressed: () => _agregar(context),
+                  ),
+                ],
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Botón "Añadir al carrito". Se actualiza solo cuando cambia el carrito:
+/// muestra cuántas unidades lleva y se desactiva al llegar al stock.
+class _BotonAgregarCarrito extends StatelessWidget {
+  final Producto producto;
+  final VoidCallback onPressed;
+
+  const _BotonAgregarCarrito({required this.producto, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: CarritoService.instance,
+      builder: (context, _) {
+        final enCarrito = CarritoService.instance.cantidadDe(producto.id);
+        final agotado = producto.stock < 1 || enCarrito >= producto.stock;
+
+        return SizedBox(
+          width: double.infinity,
+          height: 38,
+          child: ElevatedButton.icon(
+            onPressed: agotado ? null : onPressed,
+            icon: const Icon(Icons.add_shopping_cart_rounded, size: 18),
+            label: Text(
+              enCarrito == 0
+                  ? 'Añadir al carrito'
+                  : 'Añadir más ($enCarrito en el carrito)',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.poppins(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.azulClaro,
+              foregroundColor: Colors.black,
+              disabledBackgroundColor: Colors.white24,
+              disabledForegroundColor: Colors.white54,
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

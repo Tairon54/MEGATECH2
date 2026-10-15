@@ -8,6 +8,7 @@ import {
   restaurarProducto,
   contarProductosBajoStock,
   obtenerProductosBajoStock,
+  obtenerMasVendidos 
 } from "../model/productos.js";
 import { obtenerAdminsYEmpleados } from "../model/usuarios.js";
 import { enviarAlertaStock } from "../utils/sendemail.js";
@@ -225,6 +226,19 @@ export const bajoStock = async (req, res) => {
 
 export const listarBajoStock = async (req, res) => {
   const { data, error } = await obtenerProductosBajoStock();
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  res.json(data);
+};
+
+// GET: Los productos más vendidos (público, lo ve también el invitado)
+export const masVendidos = async (req, res) => {
+  const limite = Math.min(Number(req.query.limite) || 3, 10);
+
+  const { data, error } = await obtenerMasVendidos(limite);
 
   if (error) {
     return res.status(500).json({ error: error.message });

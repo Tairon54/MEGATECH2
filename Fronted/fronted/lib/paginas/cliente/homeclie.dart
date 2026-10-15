@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fronted/components/login/fondo.dart';
 import 'package:fronted/paginas/admin/perfil.dart';
 import 'package:fronted/paginas/admin/widets.dart/barranavega.dart';
+import 'package:fronted/paginas/cliente/carrito.dart';
 import 'package:fronted/paginas/cliente/components/barradebusqueda.dart';
 import 'package:fronted/paginas/cliente/components/carrusel.dart';
 import 'package:fronted/paginas/cliente/components/categorias.dart';
@@ -10,6 +11,7 @@ import 'package:fronted/paginas/cliente/components/inisiarsesion.dart';
 import 'package:fronted/paginas/cliente/iacliente.dart';
 import 'package:fronted/paginas/login.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:fronted/paginas/cliente/components/masvendidos.dart';
 
 class Homeclie extends StatefulWidget {
   final String cedula;
@@ -80,6 +82,16 @@ class _HomeclieState extends State<Homeclie> {
                 );
               },
             ),
+          BotonNav(
+            icon: Icons.shopping_cart,
+            size: 26,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Carrito()),
+              );
+            },
+          ),
         ],
       ),
       body: Fondo(
@@ -124,6 +136,7 @@ class _HomeclieState extends State<Homeclie> {
                         'Aqui encontraras nuestros productos mas comprados',
                   ),
                 ),
+                MasVendidos(mostrarCarrito: !widget.esInvitado),
                 const SizedBox(height: 20),
                 Center(
                   child: Padding(
