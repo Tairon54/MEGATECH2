@@ -7,8 +7,11 @@ class usermodel {
   final String? correo;
   final String? contrasena;
   final String? rol;
+  // NUEVO: false = cuenta desactivada (no puede iniciar sesión).
+  // Si el backend aún no envía el campo, se asume activa.
+  final bool activo;
 
-  usermodel ({
+  usermodel({
     this.id,
     required this.cedula,
     required this.nombre,
@@ -17,9 +20,10 @@ class usermodel {
     required this.correo,
     required this.contrasena,
     this.rol = 'Cliente',
+    this.activo = true,
   });
 
-  // mapear la respuesta de la base de datos 
+  // mapear la respuesta de la base de datos
   factory usermodel.fromJson(Map<String, dynamic> json) {
     return usermodel(
       id: json['id']?.toString(),
@@ -30,6 +34,7 @@ class usermodel {
       correo: json['correo'] ?? '',
       contrasena: json['contraseña'] ?? '',
       rol: json['rol'] ?? 'Cliente',
+      activo: json['activo'] != false,
     );
   }
 
@@ -45,5 +50,4 @@ class usermodel {
       "rol": rol,
     };
   }
-
 }

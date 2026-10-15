@@ -1,32 +1,37 @@
-import { 
-  obtenerProductos, 
-  obtenerProductoPorId, 
-  crearProducto, 
-  actualizarProducto, 
-  eliminarProducto, 
+import {
+  obtenerProductos,
+  obtenerInventarioCompleto,
+  obtenerProductoPorId,
+  crearProducto,
+  actualizarProducto,
+  desactivarProducto,
+  restaurarProducto,
   contarProductosBajoStock,
-  obtenerProductosBajoStock 
+  obtenerProductosBajoStock,
 } from "../model/productos.js";
 import { obtenerAdminsYEmpleados } from "../model/usuarios.js";
-import { enviarAlertaStock } from '../utils/sendemail.js';
+import { enviarAlertaStock } from "../utils/sendemail.js";
 
 // Helper: sube un buffer a Cloudinary usando la API REST directa (Unsigned)
 const subirImagenCloudinary = async (buffer, originalname, mimetype) => {
   const formData = new FormData();
-  
+
   // Crear el Blob desde el buffer de multer
   const blob = new Blob([buffer], { type: mimetype });
   formData.append("file", blob, originalname);
-  
+
   // Configurar preset y carpeta
   formData.append("upload_preset", "ml_default");
   formData.append("folder", "productos");
 
   const cloudName = process.env.CLOUDINARY_CLOUD_NAME || "f5akv7vt";
-  const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-    method: "POST",
-    body: formData
-  });
+  const response = await fetch(
+    `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+    {
+      method: "POST",
+      body: formData,
+    },
+  );
 
   const resultado = await response.json();
 
@@ -72,13 +77,13 @@ export const crear = async (req, res) => {
         nuevoProducto.foto = await subirImagenCloudinary(
           req.file.buffer,
           req.file.originalname,
-          req.file.mimetype
+          req.file.mimetype,
         );
       } catch (cloudinaryError) {
         console.error("Error subiendo imagen a Cloudinary:", cloudinaryError);
         return res.status(cloudinaryError.status || 500).json({
           error: "Error de autenticación o configuración en Cloudinary.",
-          detalle: cloudinaryError.detalle || cloudinaryError
+          detalle: cloudinaryError.detalle || cloudinaryError,
         });
       }
     }
@@ -94,7 +99,7 @@ export const crear = async (req, res) => {
     console.error("ERROR AL CREAR PRODUCTO:", error);
     res.status(500).json({
       error: "Error al crear el producto.",
-      detalle: error.message || error
+      detalle: error.message || error,
     });
   }
 };
@@ -111,13 +116,13 @@ export const actualizar = async (req, res) => {
         cambios.foto = await subirImagenCloudinary(
           req.file.buffer,
           req.file.originalname,
-          req.file.mimetype
+          req.file.mimetype,
         );
       } catch (cloudinaryError) {
         console.error("Error subiendo imagen a Cloudinary:", cloudinaryError);
         return res.status(cloudinaryError.status || 500).json({
           error: "Error de autenticación o configuración en Cloudinary.",
-          detalle: cloudinaryError.detalle || cloudinaryError
+          detalle: cloudinaryError.detalle || cloudinaryError,
         });
       }
     }
@@ -136,24 +141,56 @@ export const actualizar = async (req, res) => {
     console.error("ERROR AL ACTUALIZAR PRODUCTO:", error);
     res.status(500).json({
       error: "Error al actualizar el producto.",
-      detalle: error.message || error
+      detalle: error.message || error,
     });
   }
 };
 
-// DELETE: Eliminar producto
+// DELETE: "Eliminar" = ocultar el producto (se conserva en la base de datos)
 export const eliminar = async (req, res) => {
   const { id } = req.params;
 
-  const { error } = await eliminarProducto(id);
+  const { data, error } = await desactivarProducto(id);
 
   if (error) {
     return res.status(400).json({ error: error.message });
   }
+  if (!data || data.length === 0) {
+    return res.status(404).json({ error: "Producto no encontrado" });
+  }
 
   res.json({
-    mensaje: "Producto eliminado correctamente"
+    mensaje: "Producto eliminado correctamente",
   });
+};
+
+// PUT: volver a mostrar un producto eliminado
+export const restaurar = async (req, res) => {
+  const { id } = req.params;
+
+  const { data, error } = await restaurarProducto(id);
+
+  if (error) {
+    return res.status(400).json({ error: error.message });
+  }
+  if (!data || data.length === 0) {
+    return res.status(404).json({ error: "Producto no encontrado" });
+  }
+
+  res.json({
+    mensaje: "Producto restaurado correctamente",
+  });
+};
+
+// GET: inventario COMPLETO (activos y eliminados) para la gestión contable
+export const inventarioCompleto = async (req, res) => {
+  const { data, error } = await obtenerInventarioCompleto();
+
+  if (error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  res.json(data);
 };
 
 // Helper: Verificar niveles de stock y enviar alertas
@@ -168,7 +205,7 @@ export const verificarStock = async (producto) => {
           usuario.nombre,
           producto.nombre,
           producto.stock,
-          producto.descripcion
+          producto.descripcion,
         );
       }
     }
@@ -188,10 +225,10 @@ export const bajoStock = async (req, res) => {
 
 export const listarBajoStock = async (req, res) => {
   const { data, error } = await obtenerProductosBajoStock();
- 
+
   if (error) {
     return res.status(500).json({ error: error.message });
   }
- 
+
   res.json(data);
 };

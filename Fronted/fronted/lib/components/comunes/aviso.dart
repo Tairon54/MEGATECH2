@@ -50,7 +50,7 @@ Future<bool> confirmar(
         ElevatedButton(
           onPressed: () => Navigator.pop(ctx, true),
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.rojo,
+            backgroundColor: AppColors.rojoOscuro,
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),

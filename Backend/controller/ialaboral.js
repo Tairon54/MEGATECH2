@@ -17,7 +17,8 @@ export const chatearia = async (req, res) => {
     // 1. Obtener la carta desde tu tabla 'productos' en Supabase
     const { data: productos, error: errorProductos } = await supabase
       .from("productos")
-      .select("nombre,descripcion,precio,stock,foto,id_subcategoria");
+      .select("nombre,descripcion,precio,stock,foto,id_subcategoria")
+      .eq("activo", true);
 
     if (errorProductos) {
       console.error("Error al consultar Supabase:", errorProductos.message);
@@ -26,18 +27,22 @@ export const chatearia = async (req, res) => {
 
     if (!productos || productos.length === 0) {
       return res.status(200).json({
-        respuesta: "¡Hola! En este momento no tenemos registrado este producto en nuestro inventario."
+        respuesta:
+          "¡Hola! En este momento no tenemos registrado este producto en nuestro inventario.",
       });
     }
 
     // 2. Armar catalogo para la IA
     // FIX: antes faltaban stock y foto -> la IA no podia responder con esos datos
     // porque simplemente no estaban en el texto que se le mandaba.
-    const catalogoTexto = productos.map(p =>
-      `- **${p.nombre}**: $${Number(p.precio).toLocaleString("es-CO")} COP | ` +
-      `Stock: ${p.stock} unidades | Foto: ${p.foto || "sin foto"} | ` +
-      `Descripcion: ${p.descripcion}`
-    ).join("\n");
+    const catalogoTexto = productos
+      .map(
+        (p) =>
+          `- **${p.nombre}**: $${Number(p.precio).toLocaleString("es-CO")} COP | ` +
+          `Stock: ${p.stock} unidades | Foto: ${p.foto || "sin foto"} | ` +
+          `Descripcion: ${p.descripcion}`,
+      )
+      .join("\n");
 
     const systemPrompt = `
 Eres el asesor virtual y anfitrión de la tienda de tecnología "Megatech2".
@@ -97,7 +102,7 @@ REGLAS DE ATENCIÓN:
       model: "openai/gpt-oss-20b",
       messages: [
         { role: "system", content: systemPrompt },
-        { role: "user", content: mensaje }
+        { role: "user", content: mensaje },
       ],
       temperature: 0.3,
       max_tokens: 1200, // antes 500, subido para dejar espacio al razonamiento + respuesta
@@ -113,7 +118,7 @@ REGLAS DE ATENCIÓN:
         "Respuesta vacia de Groq. finish_reason:",
         completion.choices[0]?.finish_reason,
         "reasoning_content:",
-        completion.choices[0]?.message?.reasoning_content
+        completion.choices[0]?.message?.reasoning_content,
       );
       respuestaTexto =
         "Disculpa, tuve un problema generando la respuesta. ¿Podrías repetir tu pregunta?";
@@ -125,14 +130,14 @@ REGLAS DE ATENCIÓN:
         sesion_id: idSesionValido,
         usuario_id: usuarioId || null,
         emisor: "user",
-        mensaje: mensaje.trim()
+        mensaje: mensaje.trim(),
       },
       {
         sesion_id: idSesionValido,
         usuario_id: usuarioId || null,
         emisor: "bot",
-        mensaje: respuestaTexto
-      }
+        mensaje: respuestaTexto,
+      },
     ];
 
     const { error: errorInsert } = await supabase
@@ -140,20 +145,22 @@ REGLAS DE ATENCIÓN:
       .insert(registrosAInsertar);
 
     if (errorInsert) {
-      console.error("Error guardando el historial en Supabase:", errorInsert.message);
+      console.error(
+        "Error guardando el historial en Supabase:",
+        errorInsert.message,
+      );
       // No frenamos la respuesta al cliente aunque falle el guardado en BD
     }
 
     return res.status(200).json({
       respuesta: respuestaTexto,
-      sesionId: idSesionValido
+      sesionId: idSesionValido,
     });
-
   } catch (error) {
     console.error("Error en Groq Chat Megatech:", error);
     return res.status(500).json({
       message: "Error al procesar la respuesta",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -170,11 +177,16 @@ export const obtenerHistorialMega = async (req, res) => {
       .order("created_at", { ascending: true });
 
     if (error) {
-      return res.status(500).json({ message: "Error al consultar historial", error: error.message });
+      return res.status(500).json({
+        message: "Error al consultar historial",
+        error: error.message,
+      });
     }
 
     return res.status(200).json({ historial: historial || [] });
   } catch (error) {
-    return res.status(500).json({ message: "Error interno", error: error.message });
+    return res
+      .status(500)
+      .json({ message: "Error interno", error: error.message });
   }
 };
