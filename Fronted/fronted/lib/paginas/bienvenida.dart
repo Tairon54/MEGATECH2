@@ -98,6 +98,7 @@ class _BienvenidaState extends State<Bienvenida> {
                         MaterialPageRoute(builder: (context) => Homeclie()),
                       );
                     },
+                    icono: Icons.shopping_cart,
                   ),
 
                   const SizedBox(height: 100),
