@@ -48,11 +48,7 @@ class ListaAsincrona<T> extends StatelessWidget {
             texto: textoVacio,
           );
         }
-        return RefreshIndicator(
-          color: AppColors.azulClaro,
-          onRefresh: onReintentar,
-          child: builder(context, datos),
-        );
+        return builder(context, datos);
       },
     );
   }

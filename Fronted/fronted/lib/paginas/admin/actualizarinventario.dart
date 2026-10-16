@@ -102,51 +102,60 @@ class _ActualizarinventarioState extends State<Actualizarinventario> {
         ],
       ),
       body: Fondo(
-        child: SafeArea(
-          child: Column(
-            children: [
-              const EncabezadoAdmin(subtitulo: 'Actualizar inventario'),
-              const SizedBox(height: 12),
-              CampoBusqueda(
-                controller: _buscador,
-                hint: 'Buscar por nombre, ID o categoría',
-                onChanged: (v) => setState(() => _busqueda = v),
-              ),
-              const SizedBox(height: 10),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: BotonDegradado(
-                  texto: 'Añadir producto',
-                  icono: Icons.add_circle_outline,
-                  height: 46,
-                  borderRadius: 25,
-                  onTap: _abrirFormulario,
+        child: RefreshIndicator(
+          onRefresh: () async {
+            setState(() {});
+
+            // Espera un momento para mostrar el efecto de recarga.
+            await Future.delayed(const Duration(milliseconds: 500));
+          },
+          child: SafeArea(
+            child: Column(
+              children: [
+                const EncabezadoAdmin(subtitulo: 'Actualizar inventario'),
+                const SizedBox(height: 12),
+                CampoBusqueda(
+                  controller: _buscador,
+                  hint: 'Buscar por nombre, ID o categoría',
+                  onChanged: (v) => setState(() => _busqueda = v),
                 ),
-              ),
-              const SizedBox(height: 12),
-              Expanded(
-                child: ListaAsincrona<Producto>(
-                  futuro: _futuro,
-                  onReintentar: _recargar,
-                  textoError: 'No se pudieron cargar los productos',
-                  textoVacio: _busqueda.isEmpty
-                      ? 'Todavía no hay productos registrados'
-                      : 'No se encontraron productos',
-                  filtro: _filtrar,
-                  builder: (context, productos) => ListView.separated(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
-                    itemCount: productos.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 14),
-                    itemBuilder: (_, i) => _TarjetaEditable(
-                      producto: productos[i],
-                      onEditar: () => _abrirFormulario(producto: productos[i]),
-                      onEliminar: () => _eliminar(productos[i]),
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: BotonDegradado(
+                    texto: 'Añadir producto',
+                    icono: Icons.add_circle_outline,
+                    height: 46,
+                    borderRadius: 25,
+                    onTap: _abrirFormulario,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Expanded(
+                  child: ListaAsincrona<Producto>(
+                    futuro: _futuro,
+                    onReintentar: _recargar,
+                    textoError: 'No se pudieron cargar los productos',
+                    textoVacio: _busqueda.isEmpty
+                        ? 'Todavía no hay productos registrados'
+                        : 'No se encontraron productos',
+                    filtro: _filtrar,
+                    builder: (context, productos) => ListView.separated(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
+                      itemCount: productos.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 14),
+                      itemBuilder: (_, i) => _TarjetaEditable(
+                        producto: productos[i],
+                        onEditar: () =>
+                            _abrirFormulario(producto: productos[i]),
+                        onEliminar: () => _eliminar(productos[i]),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

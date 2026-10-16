@@ -86,44 +86,53 @@ class _PedidosState extends State<Pedidos> {
   String get _textoVacio => _cedulaBuscada != null
       ? 'No hay pedidos para la cédula $_cedulaBuscada'
       : _filtro == null
-          ? 'Todavía no hay pedidos'
-          : 'No hay pedidos "$_filtro"';
+      ? 'Todavía no hay pedidos'
+      : 'No hay pedidos "$_filtro"';
 
   @override
   Widget build(BuildContext context) {
     return PantallaAdmin(
       titulo: 'Pedidos',
-      child: Column(
-        children: [
-          BarraBusquedaCedula(
-            controller: _cedulaCtrl,
-            hayBusqueda: _cedulaBuscada != null,
-            onBuscar: _buscarPorCedula,
-            onLimpiar: _limpiarBusqueda,
-          ),
-          const SizedBox(height: 14),
-          FiltroChips(
-            opciones: <String?>[null, ...EstadoPedido.todos],
-            seleccionado: _filtro,
-            onSeleccionar: (estado) => setState(() => _filtro = estado),
-            colorDe: (estado) =>
-                estado == null ? AppColors.azulClaro : EstadoPedido.color(estado),
-          ),
-          const SizedBox(height: 12),
-          Expanded(
-            child: ListaAsincrona<Pedido>(
-              futuro: _futuroPedidos,
-              onRecargar: _recargar,
-              textoError: 'No se pudieron cargar los pedidos',
-              textoVacio: _textoVacio,
-              filtrar: (todos) => _filtro == null
-                  ? todos
-                  : todos.where((p) => p.estado == _filtro).toList(),
-              itemBuilder: (_, p) =>
-                  TarjetaPedido(pedido: p, onTap: () => _abrirDetalle(p)),
+      child: RefreshIndicator(
+        onRefresh: () async {
+          setState(() {});
+
+          // Espera un momento para mostrar el efecto de recarga.
+          await Future.delayed(const Duration(milliseconds: 500));
+        },
+        child: Column(
+          children: [
+            BarraBusquedaCedula(
+              controller: _cedulaCtrl,
+              hayBusqueda: _cedulaBuscada != null,
+              onBuscar: _buscarPorCedula,
+              onLimpiar: _limpiarBusqueda,
             ),
-          ),
-        ],
+            const SizedBox(height: 14),
+            FiltroChips(
+              opciones: <String?>[null, ...EstadoPedido.todos],
+              seleccionado: _filtro,
+              onSeleccionar: (estado) => setState(() => _filtro = estado),
+              colorDe: (estado) => estado == null
+                  ? AppColors.azulClaro
+                  : EstadoPedido.color(estado),
+            ),
+            const SizedBox(height: 12),
+            Expanded(
+              child: ListaAsincrona<Pedido>(
+                futuro: _futuroPedidos,
+                onRecargar: _recargar,
+                textoError: 'No se pudieron cargar los pedidos',
+                textoVacio: _textoVacio,
+                filtrar: (todos) => _filtro == null
+                    ? todos
+                    : todos.where((p) => p.estado == _filtro).toList(),
+                itemBuilder: (_, p) =>
+                    TarjetaPedido(pedido: p, onTap: () => _abrirDetalle(p)),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

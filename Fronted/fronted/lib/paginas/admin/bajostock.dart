@@ -31,13 +31,21 @@ class _BajostockState extends State<Bajostock> {
   Widget build(BuildContext context) {
     return PantallaAdmin(
       titulo: 'Productos en bajo stock',
-      child: ListaAsincrona<Producto>(
-        futuro: _futuroProductos,
-        onRecargar: _recargar,
-        textoError: 'No se pudieron cargar los productos',
-        textoVacio: '¡Todo en orden! No hay productos en bajo stock',
-        iconoVacio: Icons.check_circle_outline_rounded,
-        itemBuilder: (_, p) => TarjetaProductoAdmin(producto: p),
+      child: RefreshIndicator(
+        onRefresh: () async {
+          setState(() {});
+
+          // Espera un momento para mostrar el efecto de recarga.
+          await Future.delayed(const Duration(milliseconds: 500));
+        },
+        child: ListaAsincrona<Producto>(
+          futuro: _futuroProductos,
+          onRecargar: _recargar,
+          textoError: 'No se pudieron cargar los productos',
+          textoVacio: '¡Todo en orden! No hay productos en bajo stock',
+          iconoVacio: Icons.check_circle_outline_rounded,
+          itemBuilder: (_, p) => TarjetaProductoAdmin(producto: p),
+        ),
       ),
     );
   }

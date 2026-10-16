@@ -101,31 +101,23 @@ class ListaAsincrona<T> extends StatelessWidget {
         final items = filtrar == null ? datos : filtrar!(datos);
 
         if (items.isEmpty) {
-          return RefreshIndicator(
-            color: AppColors.azulClaro,
-            onRefresh: onRecargar,
-            child: ListView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              children: [
-                SizedBox(
-                  height: 320,
-                  child: MensajeEstado(icono: iconoVacio, texto: textoVacio),
-                ),
-              ],
-            ),
+          return ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            children: [
+              SizedBox(
+                height: 320,
+                child: MensajeEstado(icono: iconoVacio, texto: textoVacio),
+              ),
+            ],
           );
         }
 
-        return RefreshIndicator(
-          color: AppColors.azulClaro,
-          onRefresh: onRecargar,
-          child: ListView.separated(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
-            itemCount: items.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 14),
-            itemBuilder: (context, i) => itemBuilder(context, items[i]),
-          ),
+        return ListView.separated(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
+          itemCount: items.length,
+          separatorBuilder: (_, __) => const SizedBox(height: 14),
+          itemBuilder: (context, i) => itemBuilder(context, items[i]),
         );
       },
     );

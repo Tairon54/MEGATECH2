@@ -97,63 +97,71 @@ class _HomeclieState extends State<Homeclie> {
         ],
       ),
       body: Fondo(
-        child: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 36,
-                    vertical: 20,
-                  ),
-                  child: Center(
-                    child: Text(
-                      'Megatech 2',
-                      style: GoogleFonts.poppins(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+        child: RefreshIndicator(
+          onRefresh: () async {
+            setState(() {});
+
+            // Espera un momento para mostrar el efecto de recarga.
+            await Future.delayed(const Duration(milliseconds: 500));
+          },
+          child: SafeArea(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 36,
+                      vertical: 20,
+                    ),
+                    child: Center(
+                      child: Text(
+                        'Megatech 2',
+                        style: GoogleFonts.poppins(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
-                ),
 
-                // Mensaje solo para invitados
-                if (widget.esInvitado)
-                  BotonIniciarSesion(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Login()),
-                      );
-                    },
-                  ),
-                BarraBusqueda(),
-                const Carrusel(),
-                const Padding(
-                  padding: EdgeInsets.only(left: 15, right: 15, bottom: 15),
-                  child: EncabesadoSinIcono(
-                    title: 'Nuestros productos mas comprados',
-                    subtitle:
-                        'Aqui encontraras nuestros productos mas comprados',
-                  ),
-                ),
-                MasVendidos(mostrarCarrito: !widget.esInvitado),
-                const SizedBox(height: 20),
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(15),
+                  // Mensaje solo para invitados
+                  if (widget.esInvitado)
+                    BotonIniciarSesion(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Login()),
+                        );
+                      },
+                    ),
+                  BarraBusqueda(),
+                  const Carrusel(),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 15, right: 15, bottom: 15),
                     child: EncabesadoSinIcono(
-                      title: 'Nuestros productos',
+                      title: 'Nuestros productos mas comprados',
                       subtitle:
-                          'Revisa nuesras diferentes categorias para encontras lo que neseseitas',
+                          'Aqui encontraras nuestros productos mas comprados',
                     ),
                   ),
-                ),
-                const SizedBox(height: 30),
-                CategoriasProductos(),
-                const SizedBox(height: 30),
-              ],
+                  MasVendidos(mostrarCarrito: !widget.esInvitado),
+                  const SizedBox(height: 20),
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(15),
+                      child: EncabesadoSinIcono(
+                        title: 'Nuestros productos',
+                        subtitle:
+                            'Revisa nuesras diferentes categorias para encontras lo que neseseitas',
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  CategoriasProductos(),
+                  const SizedBox(height: 30),
+                ],
+              ),
             ),
           ),
         ),

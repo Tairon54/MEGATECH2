@@ -132,45 +132,53 @@ class _GestiondeusuariosState extends State<Gestiondeusuarios> {
   Widget build(BuildContext context) {
     return PantallaAdmin(
       titulo: 'Gestión de usuarios',
-      child: Column(
-        children: [
-          CampoBusqueda(
-            controller: _buscador,
-            hint: 'Buscar por nombre, cédula o correo',
-            onChanged: (v) => setState(() => _busqueda = v),
-          ),
-          const SizedBox(height: 12),
-          FiltroChips(
-            opciones: <String?>[null, ...RolUsuario.todos, _inactivos],
-            seleccionado: _filtro,
-            onSeleccionar: (f) => setState(() => _filtro = f),
-            colorDe: (f) => f == null
-                ? AppColors.azulClaro
-                : f == _inactivos
-                ? AppColors.rojo
-                : RolUsuario.color(f),
-          ),
-          const SizedBox(height: 12),
-          Expanded(
-            child: ListaAsincrona<usermodel>(
-              futuro: _futuro,
-              onRecargar: _recargar,
-              textoError: 'No se pudieron cargar los usuarios',
-              textoVacio: _textoVacio,
-              iconoVacio: Icons.person_search_outlined,
-              filtrar: _filtrar,
-              itemBuilder: (_, u) {
-                final esYo = u.id == _idActual;
-                return TarjetaUsuario(
-                  usuario: u,
-                  esYo: esYo,
-                  onEditar: () => _editar(u),
-                  onCambiarEstado: esYo ? null : () => _cambiarEstado(u),
-                );
-              },
+      child: RefreshIndicator(
+        onRefresh: () async {
+          setState(() {});
+
+          // Espera un momento para mostrar el efecto de recarga.
+          await Future.delayed(const Duration(milliseconds: 500));
+        },
+        child: Column(
+          children: [
+            CampoBusqueda(
+              controller: _buscador,
+              hint: 'Buscar por nombre, cédula o correo',
+              onChanged: (v) => setState(() => _busqueda = v),
             ),
-          ),
-        ],
+            const SizedBox(height: 12),
+            FiltroChips(
+              opciones: <String?>[null, ...RolUsuario.todos, _inactivos],
+              seleccionado: _filtro,
+              onSeleccionar: (f) => setState(() => _filtro = f),
+              colorDe: (f) => f == null
+                  ? AppColors.azulClaro
+                  : f == _inactivos
+                  ? AppColors.rojo
+                  : RolUsuario.color(f),
+            ),
+            const SizedBox(height: 12),
+            Expanded(
+              child: ListaAsincrona<usermodel>(
+                futuro: _futuro,
+                onRecargar: _recargar,
+                textoError: 'No se pudieron cargar los usuarios',
+                textoVacio: _textoVacio,
+                iconoVacio: Icons.person_search_outlined,
+                filtrar: _filtrar,
+                itemBuilder: (_, u) {
+                  final esYo = u.id == _idActual;
+                  return TarjetaUsuario(
+                    usuario: u,
+                    esYo: esYo,
+                    onEditar: () => _editar(u),
+                    onCambiarEstado: esYo ? null : () => _cambiarEstado(u),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

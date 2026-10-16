@@ -12,28 +12,36 @@ class PantallaAdmin extends StatelessWidget {
   final String titulo;
   final Widget child;
   final VoidCallback? onVolver;
+  final bool mostrarBarra; // NUEVO
 
   const PantallaAdmin({
     super.key,
     required this.titulo,
     required this.child,
     this.onVolver,
+    this.mostrarBarra = true, // NUEVO
   });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: Barranavegacioninferior(
-        botones: [
-          BotonNav(
-            icon: Icons.arrow_back,
-            size: 26,
-            onTap:
-                onVolver ??
-                () => Navigator.popUntil(context, (route) => route.isFirst),
-          ),
-        ],
-      ),
+      bottomNavigationBar: mostrarBarra
+          ? Barranavegacioninferior(
+              botones: [
+                BotonNav(
+                  icon: Icons.arrow_back,
+                  size: 26,
+                  onTap: () async {
+                    if (onVolver != null) {
+                      onVolver!();
+                    } else {
+                      Navigator.popUntil(context, (route) => route.isFirst);
+                    }
+                  },
+                ),
+              ],
+            )
+          : null,
       body: Fondo(
         child: SafeArea(
           child: Column(
