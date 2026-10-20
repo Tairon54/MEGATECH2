@@ -51,7 +51,7 @@ class _BienvenidaState extends State<Bienvenida> {
                     ),
                     child: Image.asset(
                       'assets/images/logo_megatech2.png',
-                      width: 70,
+                      width: 130,
                     ),
                   ),
 
@@ -66,15 +66,11 @@ class _BienvenidaState extends State<Bienvenida> {
                     ),
                   ),
 
-                  const SizedBox(height: 9),
+                  const SizedBox(height: 6),
 
-                  const TextoDegradado(texto: 'Megatech', fontSize: 34),
+                  const TextoDegradado(texto: 'Megatech 2', fontSize: 34),
 
-                  const SizedBox(height: 15),
-
-                  const TextoDegradado(texto: '2', fontSize: 32),
-
-                  const SizedBox(height: 25),
+                  const SizedBox(height: 70),
 
                   Text(
                     'En Megatech 2 te ofrecemos lo mejor en tecnología '
@@ -82,7 +78,7 @@ class _BienvenidaState extends State<Bienvenida> {
                     'que compres sin complicaciones.',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.poppins(
-                      color: Colors.white70,
+                      color: const Color.fromARGB(213, 255, 255, 255),
                       fontSize: 15,
                       height: 1.4,
                     ),
@@ -100,8 +96,17 @@ class _BienvenidaState extends State<Bienvenida> {
                     },
                     icono: Icons.shopping_cart,
                   ),
-
-                  const SizedBox(height: 100),
+                  const SizedBox(height: 30),
+                  Text(
+                    'Agrado - Huila',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.poppins(
+                      color: const Color.fromARGB(229, 255, 255, 255),
+                      fontSize: 18,
+                      height: 1.4,
+                    ),
+                  ),
+                  SizedBox(height: 40),
                 ],
               ),
             ),
