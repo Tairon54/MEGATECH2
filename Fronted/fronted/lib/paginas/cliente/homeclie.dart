@@ -8,6 +8,7 @@ import 'package:fronted/paginas/cliente/components/carrusel.dart';
 import 'package:fronted/paginas/cliente/components/categorias.dart';
 import 'package:fronted/paginas/cliente/components/encabesadosinico.dart';
 import 'package:fronted/paginas/cliente/components/inisiarsesion.dart';
+import 'package:fronted/paginas/cliente/components/menu.dart';
 import 'package:fronted/paginas/cliente/iacliente.dart';
 import 'package:fronted/paginas/login.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -37,6 +38,7 @@ class Homeclie extends StatefulWidget {
 }
 
 class _HomeclieState extends State<Homeclie> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   void _irALogin() {
     Navigator.push(
       context,
@@ -47,6 +49,8 @@ class _HomeclieState extends State<Homeclie> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
+      drawer: const Menu(),
       bottomNavigationBar: Barranavegacioninferior(
         botones: [
           // La IA se conserva siempre
@@ -60,9 +64,14 @@ class _HomeclieState extends State<Homeclie> {
               );
             },
           ),
+          BotonNav(
+            icon: Icons.menu,
+            size: 26,
+            onTap: () => _scaffoldKey.currentState?.openDrawer(),
+          ),
           // Con sesión: perfil. Sin sesión: botón para ir a login
           if (widget.esInvitado)
-            BotonNav(icon: Icons.login, size: 26, onTap: _irALogin)
+            BotonNav(icon: Icons.person, size: 26, onTap: _irALogin)
           else
             BotonNav(
               icon: Icons.person,
