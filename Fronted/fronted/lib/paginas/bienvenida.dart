@@ -51,7 +51,7 @@ class _BienvenidaState extends State<Bienvenida> {
                     ),
                     child: Image.asset(
                       'assets/images/logo_megatech2.png',
-                      width: 130,
+                      width: 70,
                     ),
                   ),
 
