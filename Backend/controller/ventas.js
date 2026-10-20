@@ -66,7 +66,7 @@ export const registrarVenta = async (req, res) => {
           error: `Producto ${item.id_producto} no encontrado.`,
         });
       }
-      // ▼▼▼ AGREGAR ▼▼▼
+      // AGREGAR
       if (producto.activo === false) {
         return res.status(400).json({
           error: `El producto "${producto.nombre}" ya no está disponible.`,

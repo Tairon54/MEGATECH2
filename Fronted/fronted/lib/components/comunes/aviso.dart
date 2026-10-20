@@ -22,6 +22,7 @@ Future<bool> confirmar(
   required String titulo,
   required String mensaje,
   String textoConfirmar = 'Eliminar',
+  Color colorConfirmar = AppColors.rojoOscuro,
 }) async {
   final r = await showDialog<bool>(
     context: context,
