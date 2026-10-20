@@ -284,7 +284,7 @@ class Menu extends StatelessWidget {
                 _item(
                   context,
                   Icons.rice_bowl,
-                  'Arrozeras',
+                  'Arroceras',
                   const Arrozeras(),
                   _colorElectro,
                 ),
