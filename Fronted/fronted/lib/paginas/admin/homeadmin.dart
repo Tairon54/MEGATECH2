@@ -49,14 +49,54 @@ class Homeadmin extends StatelessWidget {
         ),
       ],
       opciones: const [
-        OpcionHome('Bajo stok', 'productos que estan en unidades criticas', 'Revisar', Bajostock()),
-        OpcionHome('Pedidos', 'Pedidos echos por la app que deben de ser entregados', 'Colsultar', Pedidos()),
-        OpcionHome('Registrar ventas', 'Registrar ventas fisicas', 'Registrar', Registarventas()),
-        OpcionHome('Inventario', 'Revisar inventario', 'Colsultar', Celularesredmi()),
-        OpcionHome('Gestion contable', 'Revisar gestion contable', 'Consultar', Gestioncontable()),
-        OpcionHome('Actualizar inventario', 'Modidificar inventario', 'Ingresar', Actualizarinventario()),
-        OpcionHome('Gestion de usuarios', 'Modificar informacion de los usuarios', 'Modificar', Gestiondeusuarios()),
-        OpcionHome('verificar transferencias', 'Verificar las transferencias de los pagos de los pedidos', 'Consultar', Veririfcartrnsferencias()),
+        OpcionHome(
+          'Bajo stok',
+          'productos que estan en unidades criticas',
+          'Revisar',
+          Bajostock(),
+        ),
+        OpcionHome(
+          'Pedidos',
+          'Pedidos echos por la app que deben de ser entregados',
+          'Colsultar',
+          Pedidos(),
+        ),
+        OpcionHome(
+          'Registrar ventas',
+          'Registrar ventas fisicas',
+          'Registrar',
+          Registarventas(),
+        ),
+        OpcionHome(
+          'Inventario',
+          'Revisar inventario',
+          'Colsultar',
+          Celularesredmi(),
+        ),
+        OpcionHome(
+          'Gestion contable',
+          'Revisar gestion contable',
+          'Consultar',
+          Gestioncontable(),
+        ),
+        OpcionHome(
+          'Actualizar inventario',
+          'Modificar inventario',
+          'Ingresar',
+          Actualizarinventario(),
+        ),
+        OpcionHome(
+          'Gestion de usuarios',
+          'Modificar informacion de los usuarios',
+          'Modificar',
+          Gestiondeusuarios(),
+        ),
+        OpcionHome(
+          'verificar transferencias',
+          'Verificar las transferencias de los pagos de los pedidos',
+          'Consultar',
+          Veririfcartrnsferencias(),
+        ),
       ],
     );
   }

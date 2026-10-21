@@ -1,5 +1,47 @@
 import { supabase } from "../config/supabase.js";
 
+// Agrega a cada venta los datos del comprador (cliente) y del vendedor.
+// Se hace con una consulta aparte a "usuarios", así no depende del nombre
+// de las llaves foráneas. Sirve para una lista de ventas o para una sola.
+const conUsuarios = async (consulta) => {
+    const respuesta = await consulta;
+    const { data, error } = respuesta;
+    if (error || !data) return respuesta;
+
+    const lista = Array.isArray(data) ? data : [data];
+    const ids = [
+        ...new Set(
+            lista
+                .flatMap((v) => [v.id_cliente, v.id_vendedor])
+                .filter((id) => id !== null && id !== undefined)
+        ),
+    ];
+    if (ids.length === 0) return respuesta;
+
+    const { data: usuarios, error: errorUsuarios } = await supabase
+        .from("usuarios")
+        .select("id, cedula, nombre, apellido, rol")
+        .in("id", ids);
+
+    // Si falla esta consulta, las ventas se devuelven igual (sin esos datos)
+    if (errorUsuarios) {
+        console.error("No se pudieron cargar comprador/vendedor:", errorUsuarios);
+        return respuesta;
+    }
+
+    const porId = new Map((usuarios || []).map((u) => [String(u.id), u]));
+    const agregar = (venta) => ({
+        ...venta,
+        cliente: porId.get(String(venta.id_cliente)) || null,
+        vendedor: porId.get(String(venta.id_vendedor)) || null,
+    });
+
+    return {
+        ...respuesta,
+        data: Array.isArray(data) ? data.map(agregar) : agregar(data),
+    };
+};
+
 // crear una venta 
 export const crearVenta = async (venta) => {
     return await supabase
@@ -46,7 +88,8 @@ export const obtenerUsuarioporid = async (id) => {
 
 // Obtener compras de un cliente por ID
 export const obtenerComprasPorCliente = async (id_cliente) => {
-    return await supabase
+    return await conUsuarios(
+        supabase
         .from("ventas")
         .select(`
             *,
@@ -60,7 +103,8 @@ export const obtenerComprasPorCliente = async (id_cliente) => {
             )
         `)
         .eq("id_cliente", id_cliente)
-        .order("fecha", { ascending: false });
+        .order("fecha", { ascending: false })
+    );
 };
 
 // Buscar usuario por cédula
@@ -74,7 +118,8 @@ export const obtenerUsuarioPorCedula = async (cedula) => {
 
 // Obtener todas las ventas
 export const obtenerVentas = async () => {
-    return await supabase
+    return await conUsuarios(
+        supabase
         .from("ventas")
         .select(`
             *,
@@ -87,13 +132,15 @@ export const obtenerVentas = async () => {
                 )
             )
         `)
-        .order("fecha", { ascending: false });
+        .order("fecha", { ascending: false })
+    );
 };
 
 
 // Obtener ventas realizadas por un vendedor
 export const obtenerVentasPorVendedor = async (id_vendedor) => {
-    return await supabase
+    return await conUsuarios(
+        supabase
         .from("ventas")
         .select(`
             *,
@@ -107,13 +154,15 @@ export const obtenerVentasPorVendedor = async (id_vendedor) => {
             )
         `)
         .eq("id_vendedor", id_vendedor)
-        .order("fecha", { ascending: false });
+        .order("fecha", { ascending: false })
+    );
 };
 
 
 // Obtener una venta por ID
 export const obtenerVentaPorId = async (id) => {
-    return await supabase
+    return await conUsuarios(
+        supabase
         .from("ventas")
         .select(`
             *,
@@ -127,7 +176,8 @@ export const obtenerVentaPorId = async (id) => {
             )
         `)
         .eq("id", id)
-        .single();
+        .single()
+    );
 };
 
 // Obtener detalles de una venta
@@ -156,7 +206,8 @@ export const eliminarVenta = async (id) => {
 
 // Obtener reporte de ventas
 export const obtenerReporteVentas = async (fechaInicio, fechaFin) => {
-    return await supabase
+    return await conUsuarios(
+        supabase
         .from("ventas")
         .select(`
             id,
@@ -201,5 +252,6 @@ export const obtenerReporteVentas = async (fechaInicio, fechaFin) => {
         `)
         .gte("fecha", fechaInicio)
         .lte("fecha", fechaFin)
-        .order("fecha", { ascending: false });
+        .order("fecha", { ascending: false })
+    );
 };

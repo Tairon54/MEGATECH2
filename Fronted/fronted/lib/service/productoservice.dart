@@ -301,4 +301,30 @@ class ProductosService {
         .map((e) => Producto.fromJson(e as Map<String, dynamic>))
         .toList();
   }
+
+  static String _sinTildes(String texto) {
+    const conTilde = 'áàäâéèëêíìïîóòöôúùüûñ';
+    const sinTilde = 'aaaaeeeeiiiioooouuuun';
+    var t = texto.toLowerCase();
+    for (var i = 0; i < conTilde.length; i++) {
+      t = t.replaceAll(conTilde[i], sinTilde[i]);
+    }
+    return t;
+  }
+
+  /// Filtra por nombre, descripción o subcategoría. Todas las palabras
+  /// escritas deben aparecer (ej. "cargador tipo c" o "samsung").
+  static List<Producto> filtrar(List<Producto> productos, String consulta) {
+    final palabras = _sinTildes(
+      consulta,
+    ).split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
+    if (palabras.isEmpty) return productos;
+
+    return productos.where((p) {
+      final texto = _sinTildes(
+        '${p.nombre} ${p.descripcion} ${p.subcategoria ?? ''}',
+      );
+      return palabras.every(texto.contains);
+    }).toList();
+  }
 }

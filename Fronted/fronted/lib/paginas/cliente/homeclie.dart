@@ -9,10 +9,12 @@ import 'package:fronted/paginas/cliente/components/categorias.dart';
 import 'package:fronted/paginas/cliente/components/encabesadosinico.dart';
 import 'package:fronted/paginas/cliente/components/inisiarsesion.dart';
 import 'package:fronted/paginas/cliente/components/menu.dart';
+import 'package:fronted/paginas/cliente/components/piedepantalla.dart';
 import 'package:fronted/paginas/cliente/iacliente.dart';
 import 'package:fronted/paginas/login.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fronted/paginas/cliente/components/masvendidos.dart';
+import 'package:fronted/paginas/cliente/components/resultadosbusquedas.dart';
 
 class Homeclie extends StatefulWidget {
   final String cedula;
@@ -39,6 +41,25 @@ class Homeclie extends StatefulWidget {
 
 class _HomeclieState extends State<Homeclie> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final TextEditingController _busquedaCtrl = TextEditingController();
+
+  @override
+  void dispose() {
+    _busquedaCtrl.dispose();
+    super.dispose();
+  }
+
+  void _buscar([String? texto]) {
+    final consulta = (texto ?? _busquedaCtrl.text).trim();
+    if (consulta.isEmpty) return;
+    FocusScope.of(context).unfocus();
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => ResultadosBusqueda(consulta: consulta)),
+    );
+    _busquedaCtrl.clear();
+  }
+
   void _irALogin() {
     Navigator.push(
       context,
@@ -144,7 +165,18 @@ class _HomeclieState extends State<Homeclie> {
                         );
                       },
                     ),
-                  BarraBusqueda(),
+                  BarraBusqueda(
+                    controller: _busquedaCtrl,
+                    textInputAction: TextInputAction.search,
+                    onSubmitted: _buscar,
+                    suffixIcon: IconButton(
+                      icon: const Icon(
+                        Icons.arrow_forward_rounded,
+                        color: Color(0xFF20BFFF),
+                      ),
+                      onPressed: _buscar,
+                    ),
+                  ),
                   const Carrusel(),
                   const Padding(
                     padding: EdgeInsets.only(left: 15, right: 15, bottom: 15),
@@ -169,6 +201,7 @@ class _HomeclieState extends State<Homeclie> {
                   const SizedBox(height: 30),
                   CategoriasProductos(),
                   const SizedBox(height: 30),
+                  const PiePantalla(),
                 ],
               ),
             ),

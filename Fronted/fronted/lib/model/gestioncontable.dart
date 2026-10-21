@@ -81,11 +81,11 @@ class ResumenReporte {
   });
 
   factory ResumenReporte.fromJson(Map<String, dynamic> j) => ResumenReporte(
-        cantidadVentas: _int(j['cantidad_ventas']),
-        cantidadDetalles: _int(j['cantidad_detalles']),
-        unidadesVendidas: _int(j['unidades_vendidas']),
-        totalVendido: _num(j['total_vendido']),
-      );
+    cantidadVentas: _int(j['cantidad_ventas']),
+    cantidadDetalles: _int(j['cantidad_detalles']),
+    unidadesVendidas: _int(j['unidades_vendidas']),
+    totalVendido: _num(j['total_vendido']),
+  );
 }
 
 /// Una línea de una venta (un producto).
@@ -121,6 +121,34 @@ class DetalleContable {
   }
 }
 
+/// Datos de una persona de la venta (el comprador o el vendedor).
+class PersonaVenta {
+  final String id;
+  final String cedula;
+  final String nombre;
+  final String rol;
+
+  const PersonaVenta({
+    this.id = '',
+    this.cedula = '',
+    this.nombre = '',
+    this.rol = '',
+  });
+
+  /// [datos] es el objeto que manda el backend (puede venir null);
+  /// [idRespaldo] es el id de la venta por si no llegan los datos.
+  factory PersonaVenta.desde(dynamic datos, dynamic idRespaldo) {
+    final m = _map(datos);
+    if (m == null) return PersonaVenta(id: (idRespaldo ?? '').toString());
+    return PersonaVenta(
+      id: (m['id'] ?? idRespaldo ?? '').toString(),
+      cedula: (m['cedula'] ?? '').toString(),
+      nombre: '${m['nombre'] ?? ''} ${m['apellido'] ?? ''}'.trim(),
+      rol: (m['rol'] ?? '').toString(),
+    );
+  }
+}
+
 /// Una venta (sirve para el reporte y para los listados de ventas).
 class VentaContable {
   final int id;
@@ -128,7 +156,8 @@ class VentaContable {
   final double total;
   final String idCliente;
   final String idVendedor;
-  final String vendedor; // vacío si el endpoint no lo trae
+  final PersonaVenta vendedor;
+  final PersonaVenta cliente; // el comprador
   final List<DetalleContable> detalles;
 
   const VentaContable({
@@ -138,13 +167,11 @@ class VentaContable {
     required this.idCliente,
     required this.idVendedor,
     required this.vendedor,
+    required this.cliente,
     required this.detalles,
   });
 
   factory VentaContable.fromJson(Map<String, dynamic> j) {
-    final u = _map(j['usuarios']);
-    final nombre =
-        '${u?['nombre'] ?? ''} ${u?['apellido'] ?? ''}'.trim();
     final det = j['detalle_venta'];
     return VentaContable(
       id: _int(j['id']),
@@ -152,11 +179,18 @@ class VentaContable {
       total: _num(j['total']),
       idCliente: (j['id_cliente'] ?? '').toString(),
       idVendedor: (j['id_vendedor'] ?? '').toString(),
-      vendedor: nombre,
+      // 'usuarios' es el vendedor del reporte (por si el backend viejo aún responde así)
+      vendedor: PersonaVenta.desde(
+        j['vendedor'] ?? j['usuarios'],
+        j['id_vendedor'],
+      ),
+      cliente: PersonaVenta.desde(j['cliente'], j['id_cliente']),
       detalles: det is List
           ? det
-              .map((e) => DetalleContable.fromJson(Map<String, dynamic>.from(e)))
-              .toList()
+                .map(
+                  (e) => DetalleContable.fromJson(Map<String, dynamic>.from(e)),
+                )
+                .toList()
           : <DetalleContable>[],
     );
   }
@@ -174,14 +208,14 @@ class ReporteVentas {
   });
 
   factory ReporteVentas.fromJson(Map<String, dynamic> j) => ReporteVentas(
-        periodo: (j['periodo'] ?? '').toString(),
-        resumen: ResumenReporte.fromJson(
-          Map<String, dynamic>.from(j['resumen'] ?? {}),
-        ),
-        ventas: (j['ventas'] as List? ?? [])
-            .map((e) => VentaContable.fromJson(Map<String, dynamic>.from(e)))
-            .toList(),
-      );
+    periodo: (j['periodo'] ?? '').toString(),
+    resumen: ResumenReporte.fromJson(
+      Map<String, dynamic>.from(j['resumen'] ?? {}),
+    ),
+    ventas: (j['ventas'] as List? ?? [])
+        .map((e) => VentaContable.fromJson(Map<String, dynamic>.from(e)))
+        .toList(),
+  );
 }
 
 /// Resultado de buscar ventas por cédula (cliente o vendedor).
