@@ -86,7 +86,7 @@ class _BienvenidaState extends State<Bienvenida> {
                     'En la tienda tecnologica Megatech 2 te ofrecemos lo mejor en tecnología con una experiencia '
                     'rápida, segura y confiable para '
                     'que compres sin complicaciones.',
-                    textAlign: TextAlign.center,
+                    textAlign: TextAlign.justify,
                     style: GoogleFonts.poppins(
                       color: const Color.fromARGB(213, 255, 255, 255),
                       fontSize: 15,

@@ -35,10 +35,20 @@ class Menu extends StatelessWidget {
   static const Color _colorOtros = Color(0xFF90CAF9); // azul pastel
 
   void _ir(BuildContext context, Widget pantalla) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute<void>(builder: (_) => pantalla),
-    );
+    // 1. Cierra el menú primero
+    Navigator.pop(context);
+
+    // 2. Si estamos en el Home (no hay nada debajo), SE AGREGA encima.
+    //    Si ya estamos en una pantalla de productos, se REEMPLAZA
+    //    para que la pila no crezca con cada categoría.
+    final navigator = Navigator.of(context);
+    final route = MaterialPageRoute<void>(builder: (_) => pantalla);
+
+    if (navigator.canPop()) {
+      navigator.pushReplacement(route);
+    } else {
+      navigator.push(route);
+    }
   }
 
   // Encabezado de cada sección

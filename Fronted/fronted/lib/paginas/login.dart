@@ -147,7 +147,7 @@ class _LoginState extends State<Login> {
                   child: Column(
                     children: [
                       const Encabesado(
-                        title: 'Bienvenido de vuelta',
+                        title: 'Bienvenido',
                         subtitle: 'Inicia sesion en tu cuenta de megatech 2',
                       ),
                       const SizedBox(height: 28),
