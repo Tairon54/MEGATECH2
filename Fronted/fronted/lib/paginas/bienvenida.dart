@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fronted/paginas/cliente/components/carrusel.dart';
 import 'package:fronted/paginas/cliente/homeclie.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fronted/components/Bienvenida/fondo.dart';
@@ -33,29 +34,29 @@ class _BienvenidaState extends State<Bienvenida> {
               ),
               child: Column(
                 children: [
-                  const Spacer(flex: 3),
-
-                  // Logo con brillo detrás
-                  Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(
-                            0xFF00E5FF,
-                          ).withValues(alpha: 0.45),
-                          blurRadius: 60,
-                          spreadRadius: 8,
+                  // Logo en la esquina superior izquierda + nombre al lado
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/images/logo_megatech2.png',
+                          width: 70,
+                        ),
+                        const SizedBox(width: 12),
+                        const Flexible(
+                          child: TextoDegradado(
+                            texto: 'Megatech 2',
+                            fontSize: 20,
+                          ),
                         ),
                       ],
                     ),
-                    child: Image.asset(
-                      'assets/images/logo_megatech2.png',
-                      width: 130,
-                    ),
                   ),
 
-                  const SizedBox(height: 50),
+                  const Spacer(flex: 3),
+                  const Carrusel(),
 
                   Text(
                     'Bienvenido a',
@@ -66,35 +67,29 @@ class _BienvenidaState extends State<Bienvenida> {
                     ),
                   ),
 
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 1),
 
-                  const TextoDegradado(texto: 'Megatech 2', fontSize: 34),
+                  const TextoDegradado(texto: 'Megatech', fontSize: 34),
 
-                  const SizedBox(height: 70),
+                  const SizedBox(height: 3),
 
-                  // Text(
-                  //   'La mejor tienda tecnologia del Agrado Huila',
-                  //   textAlign: TextAlign.center,
-                  //   style: GoogleFonts.poppins(
-                  //     color: const Color.fromARGB(168, 8, 228, 248),
-                  //     fontSize: 26,
-                  //     fontWeight: FontWeight.w500,
-                  //   ),
-                  // ),
-                  // const SizedBox(height: 20),
+                  const TextoDegradado(texto: '2', fontSize: 32),
+
+                  const SizedBox(height: 5),
+
                   Text(
-                    'En la tienda tecnologica Megatech 2 te ofrecemos lo mejor en tecnología con una experiencia '
-                    'rápida, segura y confiable para '
+                    'En Megatech 2 te ofrecemos lo mejor en tecnología '
+                    'con una experiencia rápida, segura y confiable para '
                     'que compres sin complicaciones.',
                     textAlign: TextAlign.justify,
                     style: GoogleFonts.poppins(
-                      color: const Color.fromARGB(213, 255, 255, 255),
+                      color: Colors.white70,
                       fontSize: 15,
                       height: 1.4,
                     ),
                   ),
 
-                  const Spacer(flex: 3),
+                  const Spacer(flex: 20),
 
                   BotonDegradado(
                     texto: 'Explorar tienda',
@@ -106,15 +101,12 @@ class _BienvenidaState extends State<Bienvenida> {
                     },
                     icono: Icons.shopping_cart,
                   ),
-                  const SizedBox(height: 30),
+
+                  const SizedBox(height: 25),
                   Text(
                     'Agrado - Huila',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.poppins(
-                      color: const Color.fromARGB(229, 255, 255, 255),
-                      fontSize: 18,
-                      height: 1.4,
-                    ),
+                    style: TextStyle(fontSize: 20, color: Colors.white),
                   ),
                   SizedBox(height: 40),
                 ],
