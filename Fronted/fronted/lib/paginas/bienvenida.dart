@@ -72,9 +72,19 @@ class _BienvenidaState extends State<Bienvenida> {
 
                   const SizedBox(height: 70),
 
+                  // Text(
+                  //   'La mejor tienda tecnologia del Agrado Huila',
+                  //   textAlign: TextAlign.center,
+                  //   style: GoogleFonts.poppins(
+                  //     color: const Color.fromARGB(168, 8, 228, 248),
+                  //     fontSize: 26,
+                  //     fontWeight: FontWeight.w500,
+                  //   ),
+                  // ),
+                  // const SizedBox(height: 20),
                   Text(
-                    'En Megatech 2 te ofrecemos lo mejor en tecnología '
-                    'con una experiencia rápida, segura y confiable para '
+                    'En la tienda tecnologica Megatech 2 te ofrecemos lo mejor en tecnología con una experiencia '
+                    'rápida, segura y confiable para '
                     'que compres sin complicaciones.',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.poppins(
