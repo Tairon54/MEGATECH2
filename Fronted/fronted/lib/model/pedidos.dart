@@ -27,10 +27,16 @@ class EstadoPedido {
   static const String porPagar = 'Por pagar';
   static const String porEntregar = 'Por entregar';
   static const String entregado = 'Entregado';
+  static const String cancelado = 'Cancelado';
 
-  static const List<String> todos = [porPagar, porEntregar, entregado];
+  static const List<String> todos = [
+    porPagar,
+    porEntregar,
+    entregado,
+    cancelado,
+  ];
 
-  /// Siguiente estado permitido (null si ya no puede cambiar).
+  /// Siguiente estado "normal" (null si ya no puede cambiar).
   static String? siguiente(String actual) {
     switch (actual) {
       case porPagar:
@@ -42,6 +48,13 @@ class EstadoPedido {
     }
   }
 
+  /// true si el backend permite pasar de [actual] a [nuevo].
+  static bool puedeCambiar(String actual, String nuevo) {
+    if (actual == porPagar) return nuevo == porEntregar || nuevo == cancelado;
+    if (actual == porEntregar) return nuevo == entregado;
+    return false; // Entregado y Cancelado son finales
+  }
+
   static Color color(String estado) {
     switch (estado) {
       case porPagar:
@@ -50,6 +63,8 @@ class EstadoPedido {
         return const Color(0xFF29B6F6); // azul de la app
       case entregado:
         return const Color(0xFF2ECC71); // verde
+      case cancelado:
+        return const Color(0xFFFF5252); // rojo
       default:
         return Colors.white54;
     }
@@ -63,6 +78,8 @@ class EstadoPedido {
         return Icons.local_shipping_outlined;
       case entregado:
         return Icons.check_circle_outline_rounded;
+      case cancelado:
+        return Icons.cancel_outlined;
       default:
         return Icons.help_outline_rounded;
     }

@@ -5,11 +5,9 @@ import 'package:google_fonts/google_fonts.dart';
 
 // ESTA ES PRACTICAMENTE TODA LA PANTALLA DE CAMBIAR EL ESTADO DEL PEDIDO
 
-/// Hoja con los estados. Solo el siguiente permitido queda habilitado.
+/// Hoja con los estados. Solo los estados permitidos quedan habilitados.
 /// Devuelve el estado elegido, o null si se cierra sin elegir.
 Future<String?> elegirNuevoEstado(BuildContext context, Pedido pedido) {
-  final siguiente = EstadoPedido.siguiente(pedido.estado);
-
   return showModalBottomSheet<String>(
     context: context,
     backgroundColor: Colors.transparent,
@@ -49,7 +47,7 @@ Future<String?> elegirNuevoEstado(BuildContext context, Pedido pedido) {
               _OpcionEstado(
                 estado: estado,
                 esActual: estado == pedido.estado,
-                habilitado: estado == siguiente,
+                habilitado: EstadoPedido.puedeCambiar(pedido.estado, estado),
               ),
           ],
         ),
@@ -65,8 +63,12 @@ Future<bool> confirmarCambioEstado(
   String nuevoEstado,
 ) async {
   final color = EstadoPedido.color(nuevoEstado);
-  final avisoCorreo = nuevoEstado == EstadoPedido.porEntregar
+  final esCancelacion = nuevoEstado == EstadoPedido.cancelado;
+
+  final aviso = nuevoEstado == EstadoPedido.porEntregar
       ? '\n\nSe le enviará un correo de confirmación al cliente.'
+      : esCancelacion
+      ? '\n\nLos productos volverán al stock. Esta acción no se puede deshacer.'
       : '';
 
   final confirmado = await showDialog<bool>(
@@ -86,7 +88,7 @@ Future<bool> confirmarCambioEstado(
       ),
       content: Text(
         'El pedido #${pedido.id} pasará de "${pedido.estado}" '
-        'a "$nuevoEstado".$avisoCorreo',
+        'a "$nuevoEstado".$aviso',
         style: GoogleFonts.poppins(color: Colors.white70, fontSize: 14),
       ),
       actions: [
@@ -107,7 +109,7 @@ Future<bool> confirmarCambioEstado(
             ),
           ),
           child: Text(
-            'Confirmar',
+            esCancelacion ? 'Sí, cancelar' : 'Confirmar',
             style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
           ),
         ),

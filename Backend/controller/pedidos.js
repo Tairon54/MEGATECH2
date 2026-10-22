@@ -180,7 +180,7 @@ export const actualizar = async (req, res) => {
     // VALIDAR ESTADO
     // ==========================================
 
-    const estadosValidos = ["Por pagar", "Por entregar", "Entregado"];
+    const estadosValidos = ["Por pagar", "Por entregar", "Entregado", "Cancelado"];
 
     if (!estado) {
       return res.status(400).json({
@@ -215,11 +215,15 @@ export const actualizar = async (req, res) => {
     // VALIDAR FLUJO
     // ==========================================
 
-    if (estadoActual === "Por pagar" && estado !== "Por entregar") {
-      return res.status(400).json({
-        mensaje: "Un pedido Por pagar solamente puede pasar a Por entregar",
-      });
-    }
+    if (
+  estadoActual === "Por pagar" &&
+  estado !== "Por entregar" &&
+  estado !== "Cancelado"
+) {
+  return res.status(400).json({
+    mensaje: "Un pedido Por pagar solo puede pasar a Por entregar o Cancelado",
+  });
+}
 
     if (estadoActual === "Por entregar" && estado !== "Entregado") {
       return res.status(400).json({
@@ -227,11 +231,58 @@ export const actualizar = async (req, res) => {
       });
     }
 
+    if (estadoActual === "Cancelado") {
+  return res.status(400).json({
+    mensaje: "Un pedido Cancelado no puede cambiar de estado",
+  });
+}
+
     if (estadoActual === "Entregado") {
       return res.status(400).json({
         mensaje: "Un pedido Entregado no puede cambiar de estado",
       });
     }
+
+    // ==========================================
+// CANCELAR: devolver los productos al stock
+// ==========================================
+if (estado === "Cancelado") {
+  // Solo cambia si sigue "Por pagar" (evita devolver el stock dos veces)
+  const { data: cancelado, error: errorCancelar } = await supabase
+    .from("pedidos")
+    .update({ estado: "Cancelado" })
+    .eq("id", id)
+    .eq("estado", "Por pagar")
+    .select();
+
+  if (errorCancelar || !cancelado || cancelado.length === 0) {
+    return res.status(400).json({
+      mensaje: "Solo se puede cancelar un pedido que siga Por pagar",
+    });
+  }
+
+  const { data: detalle } = await supabase
+    .from("detalle_pedido")
+    .select("id_producto, cantidad")
+    .eq("id_pedido", id);
+
+  for (const d of detalle || []) {
+    const { data: producto } = await supabase
+      .from("productos")
+      .select("stock")
+      .eq("id", d.id_producto)
+      .single();
+
+    if (producto) {
+      await actualizarStock(d.id_producto, producto.stock + d.cantidad);
+    }
+  }
+
+  return res.status(200).json({
+    mensaje: "Pedido cancelado y stock devuelto",
+    pedido: cancelado,
+  });
+}
 
     // ==========================================
     // ACTUALIZAR ESTADO

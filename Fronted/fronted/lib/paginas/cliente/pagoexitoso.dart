@@ -42,7 +42,7 @@ class PagoExitoso extends StatelessWidget {
               'verificado por los administradores y se te enviará un correo '
               'confirmando que la transferencia fue exitosa. En consecuencia '
               'tendrás que pasar por el almacén a recoger tu pedido.',
-              textAlign: TextAlign.center,
+              textAlign: TextAlign.justify,
               style: GoogleFonts.acme(
                 color: Colors.white,
                 fontSize: 18,
