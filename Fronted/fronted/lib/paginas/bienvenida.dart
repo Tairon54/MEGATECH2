@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fronted/paginas/cliente/components/carrusel.dart';
 import 'package:fronted/paginas/cliente/components/carrusel_bienvenida.dart';
 import 'package:fronted/paginas/cliente/homeclie.dart';
 import 'package:google_fonts/google_fonts.dart';
