@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fronted/paginas/cliente/components/carrusel.dart';
+import 'package:fronted/paginas/cliente/components/carrusel_bienvenida.dart';
 import 'package:fronted/paginas/cliente/homeclie.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fronted/components/Bienvenida/fondo.dart';
@@ -56,7 +57,7 @@ class _BienvenidaState extends State<Bienvenida> {
                   ),
 
                   const Spacer(flex: 3),
-                  const Carrusel(),
+                  const CarruselBienvenida(),
 
                   Text(
                     'Bienvenido a',
