@@ -29,7 +29,8 @@ class _CarritoState extends State<Carrito> {
   final PedidosService _pedidos = PedidosService();
   bool _procesando = false;
 
-  /// Regresa a la pantalla anterior (el home del cliente).
+  /// Regresa a la pantalla anterior (el home del cliente, que ya tiene la
+  /// sesión iniciada). Así no se pierde el nombre ni los datos del usuario.
   void _volver() {
     if (widget.onVolver != null) {
       widget.onVolver!();
@@ -82,8 +83,10 @@ class _CarritoState extends State<Carrito> {
         ),
       );
     } on PedidoException catch (e) {
+      if (!mounted) return;
       mostrarAviso(context, e.mensaje, error: true);
     } catch (_) {
+      if (!mounted) return;
       mostrarAviso(
         context,
         'No se pudo conectar con el servidor. Intenta de nuevo.',
@@ -104,7 +107,6 @@ class _CarritoState extends State<Carrito> {
         listenable: _carrito,
         builder: (context, _) {
           final items = _carrito.items;
-          // coso para que se refresque la pantalla
 
           return RefreshIndicator(
             onRefresh: () async {
@@ -159,6 +161,25 @@ class _CarritoState extends State<Carrito> {
                     ),
                   ),
                 ),
+
+                // "Seguir comprando" solo aparece si hay productos en el
+                // carrito (con el carrito vacío ya está el botón de explorar).
+                if (items.isNotEmpty) ...[
+                  const SizedBox(height: 20),
+                  Center(
+                    child: SizedBox(
+                      width: 200,
+                      child: BotonDegradado(
+                        texto: 'Seguir comprando',
+                        // Sin "cargando": el spinner es solo del botón de pagar.
+                        height: 48,
+                        borderRadius: 20,
+                        // Vuelve al home que ya estaba abierto (con la sesión).
+                        onTap: _volver,
+                      ),
+                    ),
+                  ),
+                ],
               ],
             ),
           );

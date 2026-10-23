@@ -7,6 +7,7 @@ import 'package:fronted/paginas/cliente/components/barradebusqueda.dart';
 import 'package:fronted/paginas/cliente/components/carrusel.dart';
 import 'package:fronted/paginas/cliente/components/categorias.dart';
 import 'package:fronted/paginas/cliente/components/encabesadosinico.dart';
+import 'package:fronted/paginas/cliente/components/encabezadoscroll.dart';
 import 'package:fronted/paginas/cliente/components/inisiarsesion.dart';
 import 'package:fronted/paginas/cliente/components/menu.dart';
 import 'package:fronted/paginas/cliente/components/piedepantalla.dart';
@@ -42,9 +43,12 @@ class Homeclie extends StatefulWidget {
 class _HomeclieState extends State<Homeclie> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _busquedaCtrl = TextEditingController();
+  // Controla el scroll para animar el encabezado mientras se baja
+  final ScrollController _scrollCtrl = ScrollController();
 
   @override
   void dispose() {
+    _scrollCtrl.dispose();
     _busquedaCtrl.dispose();
     super.dispose();
   }
@@ -136,35 +140,40 @@ class _HomeclieState extends State<Homeclie> {
           },
           child: SafeArea(
             child: SingleChildScrollView(
+              controller: _scrollCtrl,
+              physics: const AlwaysScrollableScrollPhysics(),
               child: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 36,
-                      vertical: 20,
-                    ),
-                    child: Center(
-                      child: Text(
-                        'Megatech 2',
-                        style: GoogleFonts.poppins(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+                  // Parte de arriba: se desvanece y desaparece al bajar
+                  EncabezadoAnimado(
+                    controller: _scrollCtrl,
+                    child: Column(
+                      children: [
+                        if (widget.esInvitado) ...[
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 36,
+                              vertical: 20,
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Megatech 2',
+                                style: GoogleFonts.poppins(
+                                  color: Colors.white,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                          // Mensaje solo para invitados
+                          BotonIniciarSesion(onTap: _irALogin),
+                        ] else
+                          // Con sesión: "Hola, nombre"
+                          SaludoCliente(nombre: widget.nombre),
+                      ],
                     ),
                   ),
-
-                  // Mensaje solo para invitados
-                  if (widget.esInvitado)
-                    BotonIniciarSesion(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Login()),
-                        );
-                      },
-                    ),
                   BarraBusqueda(
                     controller: _busquedaCtrl,
                     textInputAction: TextInputAction.search,

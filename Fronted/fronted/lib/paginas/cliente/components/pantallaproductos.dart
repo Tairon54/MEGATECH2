@@ -76,6 +76,9 @@ const Map<String, String> _descripciones = {
   'Vidrios':
       'Vidrios protectores que cuidan tu pantalla de golpes y '
       'rayones.',
+  'Auriculares':
+      'Sonido nítido y comodidad para tu música, tus llamadas y '
+      'tus videos, estés donde estés.',
   // Electrodomésticos
   'Arrozeras':
       'El arroz perfecto sin estar pendiente de la estufa, '
@@ -102,6 +105,12 @@ const Map<String, String> _descripciones = {
   'Bolsos':
       'Practicidad y buen gusto para llevar todo lo que necesitas '
       'contigo.',
+  'Equipos de sonido':
+      'Potencia y calidad de audio para llenar de música tu casa, '
+      'tus reuniones y tus fiestas.',
+  'Mouse':
+      'Mouse cómodos y precisos para trabajar, estudiar o jugar '
+      'con total control.',
   'Memorias SD':
       'Más espacio para tus fotos, videos y archivos, siempre a '
       'la mano.',

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fronted/colores/stilocolores.dart';
+import 'package:fronted/paginas/cliente/acsesorios/auriculares.dart';
 import 'package:fronted/paginas/cliente/acsesorios/cabezotes_tc.dart';
 import 'package:fronted/paginas/cliente/acsesorios/cabezotes_usb.dart';
 import 'package:fronted/paginas/cliente/acsesorios/cables_usb.dart';
@@ -20,8 +21,10 @@ import 'package:fronted/paginas/cliente/electrodomesticos/ollaspresion.dart';
 import 'package:fronted/paginas/cliente/electrodomesticos/planchas.dart';
 import 'package:fronted/paginas/cliente/electrodomesticos/sanduicheras.dart';
 import 'package:fronted/paginas/cliente/otros/bolsos.dart';
+import 'package:fronted/paginas/cliente/otros/equiposdesonido.dart';
 import 'package:fronted/paginas/cliente/otros/memorias_sd.dart';
 import 'package:fronted/paginas/cliente/otros/memorias_usb.dart';
+import 'package:fronted/paginas/cliente/otros/mouse.dart';
 import 'package:fronted/paginas/cliente/otros/sim.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -241,6 +244,13 @@ class Menu extends StatelessWidget {
                 _seccion('Accesorios', Icons.bolt, _colorAccesorios),
                 _item(
                   context,
+                  Icons.headphones,
+                  'Auriculares',
+                  const Auriculares(),
+                  _colorAccesorios,
+                ),
+                _item(
+                  context,
                   Icons.power,
                   'Cabezotes USB',
                   const CabezotesUsb(),
@@ -352,6 +362,13 @@ class Menu extends StatelessWidget {
                 ),
                 _item(
                   context,
+                  Icons.speaker,
+                  'Equipos de sonido',
+                  const EquiposDeSonido(),
+                  _colorOtros,
+                ),
+                _item(
+                  context,
                   Icons.usb,
                   'Memorias USB',
                   const MemoriasUsb(),
@@ -362,6 +379,13 @@ class Menu extends StatelessWidget {
                   Icons.sd_card,
                   'Memorias SD',
                   const MemoriasSd(),
+                  _colorOtros,
+                ),
+                _item(
+                  context,
+                  Icons.mouse,
+                  'Mouse',
+                  const Mouse(),
                   _colorOtros,
                 ),
                 _item(context, Icons.sim_card, 'Sim', const Sim(), _colorOtros),

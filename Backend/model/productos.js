@@ -101,6 +101,7 @@ export const obtenerProductosBajoStock = async (umbral = 5) => {
     return await supabase
         .from("productos")
         .select("id, nombre, descripcion, precio, stock, foto, subcategorias(nombre)")
+        .eq("activo", true)  
         .lte("stock", umbral)
         .order("stock", { ascending: true });
 };

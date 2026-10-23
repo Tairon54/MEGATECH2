@@ -44,7 +44,7 @@ class DatosNequi extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  '+57 $numero',
+                  '$numero',
                   style: GoogleFonts.poppins(
                     color: Colors.white,
                     fontSize: 22,
