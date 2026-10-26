@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fronted/colores/stilocolores.dart';
 import 'package:fronted/model/pedidos.dart' show formatearPesos;
 import 'package:fronted/model/productos.dart';
+import 'package:fronted/paginas/admin/widets.dart/comprobante/visorcomprobante.dart';
 import 'package:fronted/paginas/admin/widets.dart/pedido/targetapedido.dart'
     show FotoCuadrada;
 import 'package:fronted/service/carrito.dart';
@@ -53,7 +54,18 @@ class TarjetaProductoCliente extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          FotoCuadrada(url: producto.foto),
+          GestureDetector(
+            onTap: () {
+              final foto = producto.foto;
+              if (foto == null) return;
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => VisorComprobante(url: foto)),
+              );
+            },
+            child: FotoCuadrada(url: producto.foto),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(

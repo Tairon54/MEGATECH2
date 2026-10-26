@@ -15,9 +15,9 @@ export const obtenerProductos = async () => {
     .from("productos")
     .select(
       `
-            *,
-            subcategorias(nombre)
-        `,
+        *,
+        subcategorias(nombre, categorias(nombre_categoria))
+      `,
     )
     .eq("activo", true);
 };

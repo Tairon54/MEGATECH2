@@ -7,6 +7,7 @@ class Producto {
   final int stock;
   final String? foto;
   final String? subcategoria;
+  final String? categoria; // NUEVO
 
   const Producto({
     required this.id,
@@ -16,9 +17,11 @@ class Producto {
     required this.stock,
     this.foto,
     this.subcategoria,
+    this.categoria, // NUEVO
   });
 
   factory Producto.fromJson(Map<String, dynamic> json) {
+    final sub = json['subcategorias'];
     return Producto(
       id: int.tryParse(json['id'].toString()) ?? 0,
       nombre: (json['nombre'] ?? '').toString(),
@@ -28,8 +31,9 @@ class Producto {
       foto: (json['foto'] == null || json['foto'].toString().isEmpty)
           ? null
           : json['foto'].toString(),
-      subcategoria: json['subcategorias'] is Map
-          ? json['subcategorias']['nombre']?.toString()
+      subcategoria: sub is Map ? sub['nombre']?.toString() : null,
+      categoria: (sub is Map && sub['categorias'] is Map)
+          ? sub['categorias']['nombre_categoria']?.toString()
           : null,
     );
   }

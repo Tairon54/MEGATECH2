@@ -61,9 +61,12 @@ const Map<String, String> _descripciones = {
   'Cabezotes USB':
       'Cabezotes con entrada USB, ideales para cargar en casa, '
       'en el trabajo o de viaje.',
-  'Cables USB':
-      'Cables resistentes para cargar y transferir datos sin '
-      'complicaciones.',
+  'Cables USB TC':
+      'Cables con conector tipo C para cargar y transferir datos '
+      'sin complicaciones.',
+  'Cables USB V8':
+      'Cables con conector V8 resistentes, ideales para cargar y '
+      'transferir datos.',
   'Cargadores TC':
       'Cargadores completos con conector tipo C, listos para '
       'usar desde el primer momento.',

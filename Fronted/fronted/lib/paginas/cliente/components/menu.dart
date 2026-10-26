@@ -3,7 +3,8 @@ import 'package:fronted/colores/stilocolores.dart';
 import 'package:fronted/paginas/cliente/acsesorios/auriculares.dart';
 import 'package:fronted/paginas/cliente/acsesorios/cabezotes_tc.dart';
 import 'package:fronted/paginas/cliente/acsesorios/cabezotes_usb.dart';
-import 'package:fronted/paginas/cliente/acsesorios/cables_usb.dart';
+import 'package:fronted/paginas/cliente/acsesorios/cablesusbtc.dart';
+import 'package:fronted/paginas/cliente/acsesorios/cablesusbv8.dart';
 import 'package:fronted/paginas/cliente/acsesorios/cargadores_tc.dart';
 import 'package:fronted/paginas/cliente/acsesorios/cargadores_v8.dart';
 import 'package:fronted/paginas/cliente/acsesorios/forros.dart';
@@ -266,8 +267,15 @@ class Menu extends StatelessWidget {
                 _item(
                   context,
                   Icons.cable,
-                  'Cables USB',
-                  const CablesUsb(),
+                  'Cables USB TC',
+                  const CablesUsbTc(),
+                  _colorAccesorios,
+                ),
+                _item(
+                  context,
+                  Icons.cable,
+                  'Cables USB V8',
+                  const CablesUsbV8(),
                   _colorAccesorios,
                 ),
                 _item(

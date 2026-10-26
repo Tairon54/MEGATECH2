@@ -4,7 +4,9 @@ import 'package:fronted/model/pedidos.dart' show formatearPesos;
 import 'package:fronted/model/productos.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-// LOS PRODUCTOS QUE APARECEN EN EL SELECTOR PATRA SELECIONAROS EN LA VENTA
+// LOS PRODUCTOS QUE APARECEN EN EL SELECTOR PARA SELECCIONARLOS EN LA VENTA
+// Ahora vienen agrupados: CATEGORÍA > SUBCATEGORÍA > productos,
+// con chips para filtrar por categoría y subcategoría.
 
 /// Miniatura de un producto (con placeholder si no hay foto o falla).
 class FotoProducto extends StatelessWidget {
@@ -57,6 +59,17 @@ Future<Producto?> mostrarSelectorProducto(
   );
 }
 
+// Encabezados que se mezclan con los productos en la lista.
+class _EncCategoria {
+  final String nombre;
+  const _EncCategoria(this.nombre);
+}
+
+class _EncSubcategoria {
+  final String nombre;
+  const _EncSubcategoria(this.nombre);
+}
+
 class _SelectorProducto extends StatefulWidget {
   final List<Producto> productos;
   final Set<int> bloqueados;
@@ -68,8 +81,13 @@ class _SelectorProducto extends StatefulWidget {
 }
 
 class _SelectorProductoState extends State<_SelectorProducto> {
+  static const String _sinCategoria = 'Sin categoría';
+  static const String _sinSubcategoria = 'Sin subcategoría';
+
   final TextEditingController _busqueda = TextEditingController();
   String _texto = '';
+  String? _categoria; // null = todas
+  String? _subcategoria; // null = todas
 
   @override
   void dispose() {
@@ -77,20 +95,92 @@ class _SelectorProductoState extends State<_SelectorProducto> {
     super.dispose();
   }
 
+  // ---------- Helpers de categoría ----------
+  String _cat(Producto p) {
+    final c = p.categoria?.trim() ?? '';
+    return c.isEmpty ? _sinCategoria : c;
+  }
+
+  String _sub(Producto p) {
+    final s = p.subcategoria?.trim() ?? '';
+    return s.isEmpty ? _sinSubcategoria : s;
+  }
+
+  // Los "Sin ..." van al final al ordenar.
+  String _clave(String v) => (v == _sinCategoria || v == _sinSubcategoria)
+      ? '\uffff'
+      : v.toLowerCase();
+
+  int _comparar(String a, String b) => _clave(a).compareTo(_clave(b));
+
+  List<String> get _categorias {
+    final set = widget.productos.map(_cat).toSet().toList();
+    set.sort(_comparar);
+    return set;
+  }
+
+  List<String> get _subcategorias {
+    if (_categoria == null) return [];
+    final set = widget.productos
+        .where((p) => _cat(p) == _categoria)
+        .map(_sub)
+        .toSet()
+        .toList();
+    set.sort(_comparar);
+    return set;
+  }
+
+  // ---------- Filtro + agrupación ----------
   List<Producto> get _filtrados {
     final q = _texto.trim().toLowerCase();
-    if (q.isEmpty) return widget.productos;
     return widget.productos.where((p) {
+      if (_categoria != null && _cat(p) != _categoria) return false;
+      if (_subcategoria != null && _sub(p) != _subcategoria) return false;
+      if (q.isEmpty) return true;
       return p.nombre.toLowerCase().contains(q) ||
           p.id.toString() == q ||
-          (p.subcategoria ?? '').toLowerCase().contains(q);
+          _cat(p).toLowerCase().contains(q) ||
+          _sub(p).toLowerCase().contains(q);
     }).toList();
+  }
+
+  /// Lista plana: [Categoría, Subcategoría, producto, producto, Subcategoría, ...]
+  List<Object> _construirItems(List<Producto> lista) {
+    final orden = [...lista]
+      ..sort((a, b) {
+        final c = _comparar(_cat(a), _cat(b));
+        if (c != 0) return c;
+        final s = _comparar(_sub(a), _sub(b));
+        if (s != 0) return s;
+        return a.nombre.toLowerCase().compareTo(b.nombre.toLowerCase());
+      });
+
+    final items = <Object>[];
+    String? catActual;
+    String? subActual;
+    for (final p in orden) {
+      final c = _cat(p);
+      final s = _sub(p);
+      if (c != catActual) {
+        items.add(_EncCategoria(c));
+        catActual = c;
+        subActual = null;
+      }
+      if (s != subActual) {
+        items.add(_EncSubcategoria(s));
+        subActual = s;
+      }
+      items.add(p);
+    }
+    return items;
   }
 
   @override
   Widget build(BuildContext context) {
     final alto = MediaQuery.of(context).size.height * 0.85;
     final lista = _filtrados;
+    final items = _construirItems(lista);
+    final subs = _subcategorias;
 
     return Padding(
       padding: EdgeInsets.only(
@@ -129,7 +219,7 @@ class _SelectorProductoState extends State<_SelectorProducto> {
                 controller: _busqueda,
                 onChanged: (v) => setState(() => _texto = v),
                 decoration: InputDecoration(
-                  hintText: 'Buscar por nombre o ID',
+                  hintText: 'Buscar por nombre, ID o categoría',
                   hintStyle: GoogleFonts.poppins(fontSize: 14),
                   filled: true,
                   fillColor: AppColors.fondoCampo,
@@ -150,6 +240,27 @@ class _SelectorProductoState extends State<_SelectorProducto> {
                 ),
               ),
             ),
+
+            // Chips de categorías
+            _filaChips(
+              opciones: _categorias,
+              seleccionada: _categoria,
+              onElegir: (v) => setState(() {
+                _categoria = v;
+                _subcategoria = null; // al cambiar de categoría, se reinicia
+              }),
+            ),
+
+            // Chips de subcategorías (solo si hay una categoría elegida)
+            if (_categoria != null && subs.length > 1)
+              _filaChips(
+                opciones: subs,
+                seleccionada: _subcategoria,
+                onElegir: (v) => setState(() => _subcategoria = v),
+                pequena: true,
+              ),
+
+            const SizedBox(height: 4),
             Expanded(
               child: lista.isEmpty
                   ? Center(
@@ -158,14 +269,111 @@ class _SelectorProductoState extends State<_SelectorProducto> {
                         style: GoogleFonts.poppins(color: Colors.white70),
                       ),
                     )
-                  : ListView.separated(
+                  : ListView.builder(
                       padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
-                      itemCount: lista.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 10),
-                      itemBuilder: (context, i) => _fila(lista[i]),
+                      itemCount: items.length,
+                      itemBuilder: (context, i) {
+                        final it = items[i];
+                        if (it is _EncCategoria)
+                          return _encabezadoCat(it.nombre);
+                        if (it is _EncSubcategoria) {
+                          return _encabezadoSub(it.nombre);
+                        }
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: _fila(it as Producto),
+                        );
+                      },
                     ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  // ---------- Widgets ----------
+  Widget _filaChips({
+    required List<String> opciones,
+    required String? seleccionada,
+    required ValueChanged<String?> onElegir,
+    bool pequena = false,
+  }) {
+    Widget chip(String label, bool activo, VoidCallback onTap) {
+      return Padding(
+        padding: const EdgeInsets.only(right: 8),
+        child: ChoiceChip(
+          label: Text(
+            label,
+            style: GoogleFonts.poppins(
+              fontSize: pequena ? 12 : 13,
+              fontWeight: FontWeight.w600,
+              color: activo ? Colors.black : Colors.white70,
+            ),
+          ),
+          selected: activo,
+          showCheckmark: false,
+          selectedColor: AppColors.azulClaro,
+          backgroundColor: const Color(0xFF1F2937),
+          side: BorderSide.none,
+          visualDensity: pequena
+              ? VisualDensity.compact
+              : VisualDensity.standard,
+          onSelected: (_) => onTap(),
+        ),
+      );
+    }
+
+    return SizedBox(
+      height: pequena ? 40 : 46,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        children: [
+          chip('Todas', seleccionada == null, () => onElegir(null)),
+          for (final o in opciones)
+            chip(o, seleccionada == o, () => onElegir(o)),
+        ],
+      ),
+    );
+  }
+
+  Widget _encabezadoCat(String nombre) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 14, bottom: 4),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.category_outlined,
+            color: AppColors.azulClaro,
+            size: 18,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              nombre.toUpperCase(),
+              style: GoogleFonts.poppins(
+                color: AppColors.azulClaro,
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _encabezadoSub(String nombre) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 6, bottom: 8, left: 4),
+      child: Text(
+        nombre,
+        style: GoogleFonts.poppins(
+          color: Colors.white70,
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );

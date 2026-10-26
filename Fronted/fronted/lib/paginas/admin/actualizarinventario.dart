@@ -5,6 +5,7 @@ import 'package:fronted/components/comunes/aviso.dart';
 import 'package:fronted/components/comunes/campoBusqueda.dart';
 import 'package:fronted/components/comunes/encabezadoAdmin.dart';
 import 'package:fronted/components/comunes/listaasinc.dart';
+import 'package:fronted/components/comunes/productosAgrupados.dart';
 import 'package:fronted/components/login/fondo.dart';
 import 'package:fronted/model/productos.dart';
 import 'package:fronted/paginas/admin/hojaProducto.dart';
@@ -12,8 +13,9 @@ import 'package:fronted/paginas/admin/widets.dart/barranavega.dart';
 import 'package:fronted/paginas/admin/widets.dart/targetaproducto.dart';
 import 'package:fronted/service/productoservice.dart';
 
-/// Pantalla del admin para modificar el inventario: lista todos los productos,
-/// permite buscar, añadir uno nuevo, editar (tocando la tarjeta) y eliminar.
+/// Pantalla del admin para modificar el inventario: lista los productos
+/// ordenados por categoría y subcategoría, permite buscar, filtrar con chips,
+/// añadir uno nuevo, editar (tocando la tarjeta) y eliminar.
 class Actualizarinventario extends StatefulWidget {
   const Actualizarinventario({super.key});
 
@@ -26,6 +28,8 @@ class _ActualizarinventarioState extends State<Actualizarinventario> {
   final _buscador = TextEditingController();
   late Future<List<Producto>> _futuro = _service.obtenerTodos();
   String _busqueda = '';
+  String? _categoria; // null = todas
+  String? _subcategoria; // null = todas
 
   @override
   void dispose() {
@@ -38,7 +42,7 @@ class _ActualizarinventarioState extends State<Actualizarinventario> {
     await _futuro.catchError((_) => <Producto>[]);
   }
 
-  /// Filtra por nombre, ID o subcategoría.
+  /// Filtra por nombre, ID, categoría o subcategoría.
   List<Producto> _filtrar(List<Producto> productos) {
     final q = _busqueda.trim().toLowerCase();
     if (q.isEmpty) return productos;
@@ -47,6 +51,7 @@ class _ActualizarinventarioState extends State<Actualizarinventario> {
           (p) =>
               p.nombre.toLowerCase().contains(q) ||
               p.id.toString() == q ||
+              (p.categoria ?? '').toLowerCase().contains(q) ||
               (p.subcategoria ?? '').toLowerCase().contains(q),
         )
         .toList();
@@ -103,12 +108,7 @@ class _ActualizarinventarioState extends State<Actualizarinventario> {
       ),
       body: Fondo(
         child: RefreshIndicator(
-          onRefresh: () async {
-            setState(() {});
-
-            // Espera un momento para mostrar el efecto de recarga.
-            await Future.delayed(const Duration(milliseconds: 500));
-          },
+          onRefresh: _recargar,
           child: SafeArea(
             child: Column(
               children: [
@@ -140,16 +140,19 @@ class _ActualizarinventarioState extends State<Actualizarinventario> {
                         ? 'Todavía no hay productos registrados'
                         : 'No se encontraron productos',
                     filtro: _filtrar,
-                    builder: (context, productos) => ListView.separated(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
-                      itemCount: productos.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 14),
-                      itemBuilder: (_, i) => _TarjetaEditable(
-                        producto: productos[i],
-                        onEditar: () =>
-                            _abrirFormulario(producto: productos[i]),
-                        onEliminar: () => _eliminar(productos[i]),
+                    builder: (context, productos) => ProductosAgrupados(
+                      productos: productos,
+                      categoria: _categoria,
+                      subcategoria: _subcategoria,
+                      onCategoria: (v) => setState(() {
+                        _categoria = v;
+                        _subcategoria = null;
+                      }),
+                      onSubcategoria: (v) => setState(() => _subcategoria = v),
+                      itemBuilder: (_, p) => _TarjetaEditable(
+                        producto: p,
+                        onEditar: () => _abrirFormulario(producto: p),
+                        onEliminar: () => _eliminar(p),
                       ),
                     ),
                   ),
@@ -204,7 +207,7 @@ class _TarjetaEditable extends StatelessWidget {
               ),
             ),
           ),
-        ],
+        ], 
       ),
     );
   }
