@@ -12,7 +12,7 @@ import {
 import { porid as UserModel } from "../model/usuarios.js";
 import { crearDetalle } from "../model/detalle_pedido.js";
 import { actualizarStock } from "../model/productos.js";
-import { enviarconfirmacionpedido } from "../utils/sendemail.js";
+import { enviarconfirmacionpedido, enviarCancelacionPedido } from "../utils/sendemail.js";
 import { supabase } from "../config/supabase.js";
 
 // Formatear fecha y hora de Bogotá
@@ -278,11 +278,30 @@ if (estado === "Cancelado") {
     }
   }
 
-  return res.status(200).json({
-    mensaje: "Pedido cancelado y stock devuelto",
-    pedido: cancelado,
-  });
-}
+  let correoEnviado = true;
+      const { data: cliente, error: errorCliente } = await UserModel(
+        pedidoActual.id_cliente,
+      );
+
+      if (errorCliente || !cliente?.correo) {
+        correoEnviado = false;
+      } else {
+        const resultadoCorreo = await enviarCancelacionPedido(
+          cliente.correo,
+          cliente.nombre,
+          id,
+          pedidoActual.total,
+        );
+        correoEnviado = resultadoCorreo.success;
+      }
+
+      return res.status(200).json({
+        mensaje: correoEnviado
+          ? "Pedido cancelado, stock devuelto y cliente notificado"
+          : "Pedido cancelado y stock devuelto, pero no se pudo notificar al cliente por correo",
+        pedido: cancelado,
+      });
+    }
 
     // ==========================================
     // ACTUALIZAR ESTADO
