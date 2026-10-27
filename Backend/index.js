@@ -16,6 +16,11 @@ import comproRouter from './routes/comprobante.js';
 import ialaboralRouter from './routes/ialaboral.js';
 import iaclieRouter from './routes/iaclie.js';
 
+// rutas de la api
+app.get('/health', (req, res) => {
+    res.status(200).send('OK')
+})
+
 // Cargar variables de entorno
 dotenv.config();
 
