@@ -1,15 +1,4 @@
-import nodemailer from 'nodemailer';
-import dotenv from 'dotenv';
-
-dotenv.config();
-
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-    }
-});
+import { enviarCorreoBrevo } from './brevo.js';
 
 export const enviarconfirmacionpedido = async (correo, nombre, pedidoid, total) => {
     const mailOptions = {
@@ -147,7 +136,7 @@ Equipo de Soporte - Megatech2
     };
 
     try {
-        await transporter.sendMail(mailOptions);
+        await enviarCorreoBrevo(mailOptions);
         return { success: true, message: 'Correo de confirmación enviado correctamente' };
     } catch (error) {
         console.error('Error enviando el email de confirmación:', error);
@@ -156,7 +145,8 @@ Equipo de Soporte - Megatech2
 };
 
 export const enviarAlertaStock = async (correo, nombre, producto, stock, descripcion) => {
-    await transporter.sendMail({
+    try {
+    await enviarCorreoBrevo({
         from: process.env.EMAIL_USER,
         to: correo,
         subject: "⚠ Alerta de inventario",
@@ -315,7 +305,9 @@ Equipo de Soporte - Megatech2
 </html>
 `
     });
-
+    } catch (error) {
+        console.error('Error enviando la alerta de stock:', error);
+    }
 };
 
 export const enviarCancelacionPedido = async (correo, nombre, pedidoid, total) => {
@@ -419,7 +411,7 @@ Atentamente,<br>
     };
 
     try {
-        await transporter.sendMail(mailOptions);
+        await enviarCorreoBrevo(mailOptions);
         return { success: true, message: 'Correo de cancelación enviado correctamente' };
     } catch (error) {
         console.error('Error enviando el email de cancelación:', error); 

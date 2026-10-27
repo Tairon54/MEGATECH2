@@ -1,16 +1,7 @@
 import { codigorecupera, marcarCodigoComoUsado, obtenerCodigoValido } from "../model/recuperar.js";
 import { obtenercorreo, actualizar } from "../model/usuarios.js";
-import nodemailer from 'nodemailer';
+import { enviarCorreoBrevo } from "../utils/brevo.js";
 import bcrypt from "bcryptjs";
-
-// configuramos el transporte de nodemailer
-const transportes = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    }
-});
 
 // configuramos la logica para enviar el correo electronico
 export const enviarcorreo = async (req, res) => {
@@ -35,7 +26,7 @@ export const enviarcorreo = async (req, res) => {
         }
 
         // creamos el email del codigo
-        await transportes.sendMail({
+        await enviarCorreoBrevo({
             from: process.env.EMAIL_USER,
             to: correo,
             subject: `tu codigo de recuperacion es: ${codigo}`,
@@ -200,7 +191,7 @@ export const  verificode = async  (req, res) => {
         await marcarCodigoComoUsado(codigorecupera.id);
 
         // respondeos al cliemte que la contraseña se cambio correctamente
-        await transportes.sendMail({
+        await enviarCorreoBrevo({
             from: process.env.EMAIL_USER,
             to: correo,
             subject: 'Contraseña actualizada correctamente',
