@@ -16,11 +16,6 @@ import comproRouter from './routes/comprobante.js';
 import ialaboralRouter from './routes/ialaboral.js';
 import iaclieRouter from './routes/iaclie.js';
 
-// rutas de la api
-app.get('/health', (req, res) => {
-    res.status(200).send('OK')
-})
-
 // Cargar variables de entorno
 dotenv.config();
 
@@ -30,6 +25,11 @@ const app = express();
 // Configurar middlewares
 app.use(express.json());
 app.use(cors());
+
+// Ruta de salud (Render la usa para saber que el servidor está vivo)
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
 
 // Ruta principal para comprobar que funciona
 app.get('/', (req, res) => {
