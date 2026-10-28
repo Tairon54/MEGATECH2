@@ -79,10 +79,8 @@ export const registro = async (req, res) => {
 
     // Enviar código de verificación por correo
     const resultadoEnvio = await enviarCodigoVerificacion(
-      correo,
-      nombre,
-      codigoVerificacion,
-    );
+  usuario.correo, usuario.nombre, codigoVerificacion, true,
+);
 
     // Obtener usuario creado
     const usuarioCreado = Array.isArray(data) ? data[0] : data;

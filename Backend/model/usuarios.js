@@ -20,7 +20,7 @@ export const crearuser = async (
   contraseña,
   rol,
   idVerified,
-  codigoVerficacion,
+  codigoVerificacion,
   codigoVerificacionExpiracion,
 ) => {
   const { data, error } = await supabase
@@ -35,7 +35,7 @@ export const crearuser = async (
         contraseña,
         rol,
         idVerified: false,
-        codigoVerficacion,
+        codigoVerificacion,
         codigoVerificacionExpiracion,
       },
     ])
