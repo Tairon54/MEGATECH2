@@ -117,3 +117,28 @@ REGLAS DE ATENCIÓN:
     });
   }
 };
+
+export const obtenerHistorialMega = async (req, res) => {
+  try {
+    const { sesionId } = req.params;
+
+    const { data: historial, error } = await supabase
+      .from("mensajes_chat")
+      .select("emisor, mensaje, created_at")
+      .eq("sesion_id", sesionId)
+      .order("created_at", { ascending: true });
+
+    if (error) {
+      return res.status(500).json({
+        message: "Error al consultar historial",
+        error: error.message,
+      });
+    }
+
+    return res.status(200).json({ historial: historial || [] });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Error interno", error: error.message });
+  }
+};
