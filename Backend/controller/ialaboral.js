@@ -99,15 +99,15 @@ REGLAS DE ATENCIÓN:
     // Con max_tokens muy bajo, el razonamiento se come todo el presupuesto y
     // "content" queda vacío -> por eso caía siempre en el mensaje de fallback.
     const completion = await groq.chat.completions.create({
-      model: "openai/gpt-oss-20b",
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: mensaje },
-      ],
-      temperature: 0.3,
-      max_tokens: 1200, // antes 500, subido para dejar espacio al razonamiento + respuesta
-      reasoning_effort: "low", // limita cuanto "piensa" antes de responder
-    });
+  model: "openai/gpt-oss-20b",
+  messages: [
+    { role: "system", content: systemPrompt },
+    { role: "user", content: mensaje },
+  ],
+  temperature: 0.3,
+  max_tokens: 2500, // Súbelo a 2500 para dar espacio al razonamiento y a la respuesta
+  reasoning_effort: "low", 
+});
 
     let respuestaTexto = completion.choices[0]?.message?.content?.trim();
 
