@@ -9,7 +9,7 @@ export const registro = async (req, res) => {
   try {
     const { cedula, nombre, apellido, telefono, correo, contraseña } = req.body;
 
-    // Validar datos
+    // Validar datos básicos
     if (
       !cedula ||
       !nombre ||
@@ -23,9 +23,20 @@ export const registro = async (req, res) => {
       });
     }
 
+    // --- NUEVO: Validar seguridad de la contraseña ---
+    // Mínimo 8 caracteres, al menos una mayúscula, una minúscula y un carácter especial
+    const regexPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/;
+    if (!regexPassword.test(contraseña)) {
+      return res.status(400).json({
+        error: "La contraseña debe tener al menos 8 caracteres, incluir una mayúscula, una minúscula y un carácter especial.",
+      });
+    }
+    // ------------------------------------------------
+
     // Verificar si el correo ya existe
     const { data: usuarioExiste, error: errorConsulta } =
       await obtenercorreo(correo);
+    // ... (el resto del código sigue igual)
 
     if (errorConsulta) {
       return res.status(500).json({
