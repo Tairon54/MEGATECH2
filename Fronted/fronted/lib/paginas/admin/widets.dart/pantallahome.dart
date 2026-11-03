@@ -58,7 +58,10 @@ class _PantallaHomeState extends State<PantallaHome> {
   }
 
   /// Consulta un total; si falla muestra 0 en vez de quedarse en "...".
-  Future<void> _cargar(Future<int> Function() consulta, void Function(int) guardar) async {
+  Future<void> _cargar(
+    Future<int> Function() consulta,
+    void Function(int) guardar,
+  ) async {
     var total = 0;
     try {
       total = await consulta();
@@ -67,44 +70,44 @@ class _PantallaHomeState extends State<PantallaHome> {
   }
 
   TextStyle _estilo(Color color) => GoogleFonts.poppins(
-        color: color,
-        fontSize: 24,
-        fontWeight: FontWeight.bold,
-      );
+    color: color,
+    fontSize: 24,
+    fontWeight: FontWeight.bold,
+  );
 
   Widget _estadistica(int? valor, String etiqueta, Color color) =>
       Tarjetaestadistica(
         valor: valor?.toString() ?? '...',
         etiqueta: etiqueta,
         colorValor: color,
-        colorBorde: AppColors.bordeTarjeta,
+        colorBorde: const Color.fromARGB(255, 32, 255, 173),
       );
 
   Widget _tarjeta(OpcionHome o) => Targetas(
-        titulo: o.titulo,
-        descripcion: o.descripcion,
-        colorTitulo: AppColors.azulClaro,
-        colorBorde: AppColors.bordeTarjeta,
-        textoBoton: o.textoBoton,
-        onPressed: () => irA(context, o.pagina),
-      );
+    titulo: o.titulo,
+    descripcion: o.descripcion,
+    colorTitulo: AppColors.azulClaro,
+    colorBorde: AppColors.bordeTarjeta,
+    textoBoton: o.textoBoton,
+    onPressed: () => irA(context, o.pagina),
+  );
 
   /// Dos tarjetas de la misma altura; si [b] es null, [a] ocupa todo el ancho.
   Widget _fila(Widget a, [Widget? b]) => Padding(
-        padding: const EdgeInsets.only(bottom: 16),
-        child: b == null
-            ? a
-            : IntrinsicHeight(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Expanded(child: a),
-                    const SizedBox(width: 10),
-                    Expanded(child: b),
-                  ],
-                ),
-              ),
-      );
+    padding: const EdgeInsets.only(bottom: 16),
+    child: b == null
+        ? a
+        : IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(child: a),
+                const SizedBox(width: 10),
+                Expanded(child: b),
+              ],
+            ),
+          ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -114,18 +117,21 @@ class _PantallaHomeState extends State<PantallaHome> {
       bottomNavigationBar: Barranavegacioninferior(botones: widget.botones),
       body: Fondo(
         child: RefreshIndicator(
-        onRefresh: () async {
-          setState(() {});
+          onRefresh: () async {
+            setState(() {});
 
-          // Espera un momento para mostrar el efecto de recarga.
-          await Future.delayed(const Duration(milliseconds: 500));
-        },
+            // Espera un momento para mostrar el efecto de recarga.
+            await Future.delayed(const Duration(milliseconds: 500));
+          },
           child: SafeArea(
             child: SingleChildScrollView(
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 20),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 36,
+                      vertical: 20,
+                    ),
                     child: Text('Megatech 2', style: _estilo(Colors.white)),
                   ),
                   const Divider(color: Colors.white, thickness: 1, height: 20),
@@ -142,11 +148,22 @@ class _PantallaHomeState extends State<PantallaHome> {
                         ),
                         const SizedBox(height: 20),
                         _fila(
-                          _estadistica(_pedidos, 'Pedidos por entregar', const Color(0xFF1BC2F0)),
-                          _estadistica(_bajoStock, 'Productos en bajo stock', const Color(0xFFEC0404)),
+                          _estadistica(
+                            _pedidos,
+                            'Pedidos por entregar',
+                            const Color(0xFF1BC2F0),
+                          ),
+                          _estadistica(
+                            _bajoStock,
+                            'Productos en bajo stock',
+                            const Color(0xFFEC0404),
+                          ),
                         ),
                         for (var i = 0; i < o.length; i += 2)
-                          _fila(_tarjeta(o[i]), i + 1 < o.length ? _tarjeta(o[i + 1]) : null),
+                          _fila(
+                            _tarjeta(o[i]),
+                            i + 1 < o.length ? _tarjeta(o[i + 1]) : null,
+                          ),
                       ],
                     ),
                   ),
