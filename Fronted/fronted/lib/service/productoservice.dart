@@ -242,22 +242,43 @@ class ProductosService {
   }
 
   /// "Cabezotes TC" -> "cabezotestc" (sin tildes, mayúsculas ni símbolos).
-  static String _normalizar(String texto) {
+  /// Palabras importantes de un texto: sin tildes, sin "a/de/la...", sin plural.
+  static Set<String> _tokens(String texto) {
     const conTilde = 'áàäâéèëêíìïîóòöôúùüûñ';
     const sinTilde = 'aaaaeeeeiiiioooouuuun';
+    const vacias = {
+      'a',
+      'de',
+      'del',
+      'la',
+      'el',
+      'las',
+      'los',
+      'para',
+      'con',
+      'y',
+      'en',
+    };
     var t = texto.toLowerCase();
     for (var i = 0; i < conTilde.length; i++) {
       t = t.replaceAll(conTilde[i], sinTilde[i]);
     }
-    return t.replaceAll(RegExp(r'[^a-z0-9]'), '');
+    return t
+        .split(RegExp(r'[^a-z0-9]+'))
+        .where((p) => p.isNotEmpty && !vacias.contains(p))
+        .map(
+          (p) => p.length > 3 && p.endsWith('s')
+              ? p.substring(0, p.length - 1)
+              : p,
+        )
+        .toSet();
   }
 
   static bool _coincide(String deProducto, String buscada) {
-    final a = _normalizar(deProducto);
-    final b = _normalizar(buscada);
+    final a = _tokens(deProducto);
+    final b = _tokens(buscada);
     if (a.isEmpty || b.isEmpty) return false;
-    if (a == b) return true;
-    return a.length >= 4 && b.length >= 4 && (a.contains(b) || b.contains(a));
+    return a.containsAll(b) || b.containsAll(a);
   }
 
   /// GET /productos (ruta pública) y se queda con los de una subcategoría.
