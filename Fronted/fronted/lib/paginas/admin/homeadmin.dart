@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fronted/paginas/admin/actualizarinventario.dart';
 import 'package:fronted/paginas/admin/bajostock.dart';
-import 'package:fronted/paginas/admin/chacbot.dart';
 import 'package:fronted/paginas/admin/gestioncontable.dart';
 import 'package:fronted/paginas/admin/gestiondeusuarios.dart';
 import 'package:fronted/paginas/admin/pedidos.dart';
@@ -11,6 +10,7 @@ import 'package:fronted/paginas/admin/veririfcartrnsferencias.dart';
 import 'package:fronted/paginas/admin/widets.dart/barranavega.dart';
 import 'package:fronted/paginas/admin/widets.dart/pantallahome.dart';
 import 'package:fronted/paginas/cliente/celulares/celulares_redmi.dart';
+import 'package:fronted/paginas/cliente/iacliente.dart';
 
 class Homeadmin extends StatelessWidget {
   final String cedula, nombre, apellido, telefono, correo;
@@ -31,7 +31,7 @@ class Homeadmin extends StatelessWidget {
       botones: [
         BotonNav(
           icon: Icons.smart_toy,
-          onTap: () => irA(context, const Chacbot()),
+          onTap: () => irA(context, const Iacliente()),
         ),
         BotonNav(
           icon: Icons.person,

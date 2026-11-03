@@ -46,7 +46,21 @@ class _RegistroState extends State<Registro> {
       return;
     }
 
-    // 2. Verificar que aceptó términos y condiciones
+    // 2. Verificar seguridad de la contraseña
+    // Mínimo 8 caracteres, al menos una mayúscula, una minúscula y un carácter especial
+    final regexPassword = RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$');
+    if (!regexPassword.hasMatch(contrasenaController.text)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'La contraseña debe tener al menos 8 caracteres, incluir una mayúscula, una minúscula y un carácter especial.',
+          ),
+        ),
+      );
+      return;
+    }
+
+    // 3. Verificar que aceptó términos y condiciones
     if (!aceptar) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -58,7 +72,7 @@ class _RegistroState extends State<Registro> {
       return;
     }
 
-    // 3. Verificar que las contraseñas sean iguales
+    // 4. Verificar que las contraseñas sean iguales
     if (contrasenaController.text != confirmarController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Las contraseñas no coinciden')),
@@ -66,7 +80,7 @@ class _RegistroState extends State<Registro> {
       return;
     }
 
-    // 4. Crear el usuario
+    // 5. Crear el usuario
     final correo = correoController.text.trim();
     final usuario = usermodel(
       cedula: cedulaController.text.trim(),
@@ -78,7 +92,7 @@ class _RegistroState extends State<Registro> {
       rol: 'Cliente',
     );
 
-    // 5. Enviar al backend
+    // 6. Enviar al backend
     try {
       final respuesta = await Userservice().registrar(usuario);
 
@@ -96,11 +110,12 @@ class _RegistroState extends State<Registro> {
         ),
       );
 
-      // 6. Ir a pedir el código de verificación (la cuenta aún no está
-      // verificada, así que no puede iniciar sesión todavía)
+      // 7. Ir a pedir el código de verificación
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => VerificarCuenta(correo: correo)),
+        MaterialPageRoute(
+          builder: (context) => VerificarCuenta(correo: correo),
+        ),
       );
     } catch (e) {
       if (!mounted) return;
@@ -150,14 +165,14 @@ class _RegistroState extends State<Registro> {
                     children: [
                       const Encabesado(
                         icon: Icons.person_add,
-                        title: 'Unete a megatech 2',
+                        title: 'Únete a megatech 2',
                         subtitle:
-                            'Crea tu cuenta de magtech 2 y disfruta de la mejor tecnologia',
+                            'Crea tu cuenta de megatech 2 y disfruta de la mejor tecnología',
                       ),
                       const SizedBox(height: 28),
 
                       Leertexto(
-                        label: 'Numero de cedula',
+                        label: 'Número de cédula',
                         controller: cedulaController,
                         keyboardType: TextInputType.number,
                       ),
@@ -178,14 +193,14 @@ class _RegistroState extends State<Registro> {
                       const SizedBox(height: 18),
 
                       Leertexto(
-                        label: 'Numero de telefono',
+                        label: 'Número de teléfono',
                         controller: telefonoController,
                         keyboardType: TextInputType.number,
                       ),
                       const SizedBox(height: 18),
 
                       Leertexto(
-                        label: 'Correo electronico',
+                        label: 'Correo electrónico',
                         controller: correoController,
                         keyboardType: TextInputType.emailAddress,
                       ),
@@ -210,7 +225,7 @@ class _RegistroState extends State<Registro> {
                       const SizedBox(height: 8),
 
                       Leertexto(
-                        label: 'Confirmacion de contraseña',
+                        label: 'Confirmación de contraseña',
                         controller: confirmarController,
                         obscureText: ocultarConfirmacion,
                         suffixIcon: IconButton(
@@ -242,7 +257,7 @@ class _RegistroState extends State<Registro> {
 
                       Notienesregister(
                         question: '¿Ya tienes cuenta?',
-                        actionText: 'Inicia sesion aqui',
+                        actionText: 'Inicia sesión aquí',
                         onTap: _irALogin,
                       ),
                     ],
