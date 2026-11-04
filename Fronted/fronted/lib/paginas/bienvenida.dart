@@ -69,13 +69,9 @@ class _BienvenidaState extends State<Bienvenida> {
 
                   const SizedBox(height: 1),
 
-                  const TextoDegradado(texto: 'Megatech', fontSize: 34),
+                  const TextoDegradado(texto: 'Megatech 2', fontSize: 34),
 
-                  const SizedBox(height: 3),
-
-                  const TextoDegradado(texto: '2', fontSize: 32),
-
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 25),
 
                   Text(
                     'En Megatech 2 te ofrecemos lo mejor en tecnología '

@@ -7,6 +7,7 @@ import 'package:fronted/paginas/cliente/components/menu.dart';
 import 'package:fronted/paginas/cliente/components/targetasproductos.dart';
 import 'package:fronted/service/productoservice.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:fronted/paginas/cliente/components/barracarrito.dart';
 
 /// Pantalla reutilizable que lista los productos de UNA subcategoría.
 /// Sirve para cliente y para personal: según el rol del usuario que inició
@@ -245,6 +246,7 @@ class _PantallaProductosState extends State<PantallaProductos> {
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       drawer: const Menu(),
+      bottomNavigationBar: const BarraCarrito(),
       body: Fondo(
         child: SafeArea(
           child: Column(

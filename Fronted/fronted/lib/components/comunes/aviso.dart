@@ -45,13 +45,15 @@ Future<bool> confirmar(
           onPressed: () => Navigator.pop(ctx, false),
           child: Text(
             'Cancelar',
-            style: GoogleFonts.poppins(color: Colors.white70),
+            style: GoogleFonts.poppins(
+              color: const Color.fromARGB(179, 92, 72, 72),
+            ),
           ),
         ),
         ElevatedButton(
           onPressed: () => Navigator.pop(ctx, true),
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.rojoOscuro,
+            backgroundColor: colorConfirmar, // antes: AppColors.rojoOscuro
             foregroundColor: Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),

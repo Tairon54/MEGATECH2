@@ -5,6 +5,7 @@ import 'package:fronted/model/productos.dart';
 import 'package:fronted/paginas/admin/widets.dart/comprobante/visorcomprobante.dart';
 import 'package:fronted/paginas/admin/widets.dart/pedido/targetapedido.dart'
     show FotoCuadrada;
+import 'package:fronted/paginas/login.dart';
 import 'package:fronted/service/carrito.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -106,6 +107,14 @@ class TarjetaProductoCliente extends StatelessWidget {
                     producto: producto,
                     onPressed: () => _agregar(context),
                   ),
+                ] else ...[
+                  const SizedBox(height: 10),
+                  _BotonComprarInvitado(
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const Login()),
+                    ),
+                  ),
                 ],
               ],
             ),
@@ -163,6 +172,39 @@ class _BotonAgregarCarrito extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+/// Botón "Comprar" para invitados: los lleva al login para que
+/// inicien sesión o se registren.
+class _BotonComprarInvitado extends StatelessWidget {
+  final VoidCallback onPressed;
+
+  const _BotonComprarInvitado({required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      height: 38,
+      child: ElevatedButton.icon(
+        onPressed: onPressed,
+        icon: const Icon(Icons.shopping_bag_outlined, size: 18),
+        label: Text(
+          'Comprar',
+          style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w600),
+        ),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.azulClaro,
+          foregroundColor: Colors.black,
+          elevation: 0,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+        ),
+      ),
     );
   }
 }

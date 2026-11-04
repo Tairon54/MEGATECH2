@@ -55,7 +55,12 @@ class _HojaComprobanteState extends State<HojaComprobante> {
           '#${_c.idPedido}? Pasará a "Por entregar" y se enviará un correo '
           'al cliente.',
       textoConfirmar: 'Aprobar',
-      colorConfirmar: AppColors.azulOscuro,
+      colorConfirmar: const Color.fromARGB(
+        190,
+        46,
+        204,
+        112,
+      ), // verde (antes: AppColors.azulOscuro)
     );
     if (!ok || !mounted) return;
 
