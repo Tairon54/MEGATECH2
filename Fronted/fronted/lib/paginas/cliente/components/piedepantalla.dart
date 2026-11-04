@@ -23,6 +23,12 @@ class PiePantalla extends StatelessWidget {
   static const String horarioFinSemana = '7:00 a. m. a 8:00 p. m.';
   // =============================
 
+  // Lista de desarrolladores para mostrarlos ordenados uno debajo del otro
+  static const List<String> desarrolladoresLista = [
+    'Jhon Jaider Cerquera',
+    'Yeison Quilindo',
+  ];
+
   final String telefono;
   final String direccion;
 
@@ -106,6 +112,26 @@ class PiePantalla extends StatelessWidget {
             child: Text(
               direccion,
               style: GoogleFonts.poppins(color: Colors.white70, fontSize: 14),
+            ),
+          ),
+          const _Separador(),
+          _Fila(
+            icono: Icons.supervised_user_circle,
+            titulo: 'Desarrolladores de la App',
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: desarrolladoresLista.map((getDevText) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 2),
+                  child: Text(
+                    '• $getDevText',
+                    style: GoogleFonts.poppins(
+                      color: Colors.white70,
+                      fontSize: 14,
+                    ),
+                  ),
+                );
+              }).toList(),
             ),
           ),
         ],

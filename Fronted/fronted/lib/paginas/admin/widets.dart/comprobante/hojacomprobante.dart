@@ -100,7 +100,7 @@ class _HojaComprobanteState extends State<HojaComprobante> {
                 width: 44,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: const Color.fromARGB(136, 247, 17, 17),
+                  color: Colors.white24,
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),
