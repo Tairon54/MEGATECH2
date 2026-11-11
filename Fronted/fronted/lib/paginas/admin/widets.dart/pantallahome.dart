@@ -6,6 +6,7 @@ import 'package:fronted/paginas/admin/widets.dart/targetas.dart';
 import 'package:fronted/paginas/admin/widets.dart/targetasesta.dart';
 import 'package:fronted/service/desboard.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:fronted/components/comunes/ayuda_flotante.dart';
 
 // ESTRUCTURA COMPARTIDA DEL HOME (admin y empleado)
 
@@ -114,6 +115,9 @@ class _PantallaHomeState extends State<PantallaHome> {
     final o = widget.opciones;
 
     return Scaffold(
+      floatingActionButton: const AyudaFlotante(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+
       bottomNavigationBar: Barranavegacioninferior(botones: widget.botones),
       body: Fondo(
         child: RefreshIndicator(
