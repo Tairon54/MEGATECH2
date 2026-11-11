@@ -18,6 +18,7 @@ dependencies:
 
   http: ^1.2.0
   shared_preferences: ^2.2.2
+  syncfusion_flutter_pdfviewer: ^35.1.46
 
 dev_dependencies:
   flutter_test:
@@ -30,6 +31,7 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/pdf/manual_usuario.pdf
 
 flutter_launcher_icons:
   android: "launcher_icon"

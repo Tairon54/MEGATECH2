@@ -16,6 +16,7 @@ import 'package:fronted/paginas/login.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fronted/paginas/cliente/components/masvendidos.dart';
 import 'package:fronted/paginas/cliente/components/resultadosbusquedas.dart';
+import 'package:fronted/components/comunes/ayuda_flotante.dart';
 
 class Homeclie extends StatefulWidget {
   final String cedula;
@@ -74,6 +75,8 @@ class _HomeclieState extends State<Homeclie> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: AyudaFlotante(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       key: _scaffoldKey,
       drawer: const Menu(),
       bottomNavigationBar: Barranavegacioninferior(
