@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 class ApiConfig {
   // false = backend local, true = backend en Render
-  static const bool useRemote = false;
+  static const bool useRemote = true;
   static const String _remoteUrl = 'https://megatech2.onrender.com';
 
   // true = celular real por USB (adb reverse), false = emulador
