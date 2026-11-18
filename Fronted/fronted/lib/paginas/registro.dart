@@ -11,6 +11,7 @@ import 'package:fronted/components/login/encabesado.dart';
 import 'package:fronted/components/login/fondo.dart';
 import 'package:fronted/components/login/leertexto.dart';
 import 'package:fronted/components/login/notienesregister.dart';
+import 'package:fronted/paginas/pantalla_terminos_condiciones.dart';
 
 class Registro extends StatefulWidget {
   const Registro({super.key});
@@ -30,6 +31,13 @@ class _RegistroState extends State<Registro> {
   bool aceptar = false;
   bool ocultarContrasena = true;
   bool ocultarConfirmacion = true;
+
+  void _abrirDocumentoLegal() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const PantallaTerminosCondiciones()),
+    );
+  }
 
   Future<void> registrarUsuario() async {
     // 1. Verificar que todos los campos estén llenos
@@ -245,6 +253,8 @@ class _RegistroState extends State<Registro> {
                       Terminoscondiciones(
                         value: aceptar,
                         onChanged: (value) => setState(() => aceptar = value),
+                        onTapTerminos: _abrirDocumentoLegal,
+                        onTapPrivacidad: _abrirDocumentoLegal,
                       ),
                       const SizedBox(height: 8),
 

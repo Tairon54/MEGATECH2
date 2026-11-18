@@ -115,7 +115,7 @@ class _PantallaHomeState extends State<PantallaHome> {
     final o = widget.opciones;
 
     return Scaffold(
-      floatingActionButton: const AyudaFlotante(),
+      floatingActionButton:  AyudaFlotante(),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
 
       bottomNavigationBar: Barranavegacioninferior(botones: widget.botones),

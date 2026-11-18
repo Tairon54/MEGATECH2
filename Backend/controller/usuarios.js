@@ -121,3 +121,44 @@ export const obtenerUsuarioPorCedula = async (req, res) => {
     });
   }
 };
+
+// ELIMINAR MI PROPIA CUENTA
+export const eliminarMiCuenta = async (req, res) => {
+  try {
+    // El ID se obtiene del token, nunca del cliente.
+    const idUsuario = req.usuario.id;
+
+    if (!idUsuario) {
+      return res.status(401).json({
+        error: "No se pudo identificar al usuario.",
+      });
+    }
+
+    const { data, error } = await eliminar(idUsuario);
+
+    if (error) {
+      console.error("Error eliminando cuenta:", error);
+
+      return res.status(409).json({
+        error:
+          "No se pudo eliminar la cuenta porque existen registros relacionados. Contacta al soporte.",
+      });
+    }
+
+    if (!data || data.length === 0) {
+      return res.status(404).json({
+        error: "No se encontró la cuenta.",
+      });
+    }
+
+    return res.status(200).json({
+      mensaje: "Tu cuenta ha sido eliminada correctamente.",
+    });
+  } catch (error) {
+    console.error("Error al eliminar mi cuenta:", error);
+
+    return res.status(500).json({
+      error: "Ocurrió un error al eliminar tu cuenta.",
+    });
+  }
+};

@@ -1,4 +1,4 @@
-package com.example.fronted
+package com.megatech2.login
 
 import io.flutter.embedding.android.FlutterActivity
 
