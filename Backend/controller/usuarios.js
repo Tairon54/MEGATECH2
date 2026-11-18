@@ -5,6 +5,7 @@ import {
   actualizar,
   eliminar,
   buscarPorCedula,
+  eliminarCuentaCompleta,
 } from "../model/usuarios.js";
 import bcrypt from "bcryptjs";
 
@@ -134,16 +135,14 @@ export const eliminarMiCuenta = async (req, res) => {
       });
     }
 
-    const { data, error } = await eliminar(idUsuario);
+   const { data, error } = await eliminarCuentaCompleta(idUsuario);
 
     if (error) {
-      console.error("Error eliminando cuenta:", error);
-
-      return res.status(409).json({
-        error:
-          "No se pudo eliminar la cuenta porque existen registros relacionados. Contacta al soporte.",
-      });
-    }
+  console.error("Error eliminando cuenta:", error);
+  return res.status(500).json({
+    error: "No se pudo eliminar la cuenta. Intenta de nuevo más tarde.",
+  });
+}
 
     if (!data || data.length === 0) {
       return res.status(404).json({

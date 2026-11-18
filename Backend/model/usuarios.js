@@ -105,3 +105,58 @@ export const buscarPorCedula = async (cedula) => {
 
   return data;
 };
+
+// Elimina al usuario Y todos sus registros relacionados (orden: hijos primero)
+export const eliminarCuentaCompleta = async (idUsuario) => {
+  // Borra filas de una tabla donde la columna esté en la lista de valores
+  const borrar = async (tabla, columna, valores) => {
+    if (!valores || valores.length === 0) return;
+    const { error } = await supabase
+      .from(tabla)
+      .delete()
+      .in(columna, valores);
+    if (error) throw new Error(`${tabla}: ${error.message}`);
+  };
+
+  try {
+    // 1. Ids de los pedidos y ventas del usuario
+    const { data: pedidos, error: e1 } = await supabase
+      .from("pedidos")
+      .select("id")
+      .eq("id_cliente", idUsuario);
+    if (e1) throw new Error(`pedidos: ${e1.message}`);
+
+    const { data: ventas, error: e2 } = await supabase
+      .from("ventas")
+      .select("id")
+      .eq("id_cliente", idUsuario);
+    if (e2) throw new Error(`ventas: ${e2.message}`);
+
+    const idsPedidos = (pedidos || []).map((p) => p.id);
+    const idsVentas = (ventas || []).map((v) => v.id);
+
+    // 2. Tablas hijas primero
+    await borrar("mensajes_chat", "usuario_id", [idUsuario]);
+    await borrar("recovery_codes", "usuario_id", [idUsuario]);
+
+    await borrar("comprobantes", "id_pedido", idsPedidos);
+    await borrar("comprobantes", "id_cliente", [idUsuario]);
+
+    await borrar("detalle_pedido", "id_pedido", idsPedidos);
+    await borrar("pedidos", "id_cliente", [idUsuario]);
+
+    await borrar("detalle_venta", "id_venta", idsVentas);
+    await borrar("ventas", "id_cliente", [idUsuario]);
+
+    // 3. Por último, el usuario
+    const { data, error } = await supabase
+      .from("usuarios")
+      .delete()
+      .eq("id", idUsuario)
+      .select();
+
+    return { data, error };
+  } catch (err) {
+    return { data: null, error: err };
+  }
+};
