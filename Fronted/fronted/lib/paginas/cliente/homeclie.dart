@@ -114,6 +114,7 @@ class _HomeclieState extends State<Homeclie> {
                       apellido: widget.apellido,
                       telefono: widget.telefono,
                       correo: widget.correo,
+                      puedeEliminarCuenta: true,
                     ),
                   ),
                 );
